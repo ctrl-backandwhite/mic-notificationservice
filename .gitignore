@@ -1,0 +1,91 @@
+# =====================
+# Build output
+# =====================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+build/
+
+# =====================
+# IDE - IntelliJ IDEA
+# =====================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# =====================
+# IDE - Eclipse
+# =====================
+.classpath
+.project
+.settings/
+bin/
+
+# =====================
+# IDE - VS Code
+# =====================
+.vscode/
+
+# =====================
+# OS generated files
+# =====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*~
+
+# =====================
+# Maven
+# =====================
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.flattened-pom.xml
+
+# =====================
+# Logs
+# =====================
+*.log
+logs/
+
+# =====================
+# Environment & secrets
+# =====================
+.env
+.env.*
+!.env.example
+src/main/resources/compose/.env
+application-local.yaml
+src/main/resources/application-local.yaml
+
+# =====================
+# Docker
+# =====================
+docker-compose.override.yml
+
+# =====================
+# JaCoCo / test reports
+# =====================
+jacoco.exec
+*.exec
+
+# =====================
+# Misc
+# =====================
+*.bak
+*.tmp
+*.orig
+hs_err_pid*
+replay_pid*

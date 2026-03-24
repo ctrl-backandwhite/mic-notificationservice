@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${subject ?: 'Notificación'}">Notificación</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; padding: 40px; }
+        .content { color: #555555; line-height: 1.6; }
+        .footer { margin-top: 40px; text-align: center; color: #aaaaaa; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="content">
+        <p th:text="${body ?: 'Tienes una nueva notificación.'}">Tienes una nueva notificación.</p>
+    </div>
+    <div class="footer">
+        <p>&copy; 2025 BackAndWhite. Todos los derechos reservados.</p>
+    </div>
+</div>
+</body>
+</html>
