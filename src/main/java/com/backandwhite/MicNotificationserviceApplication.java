@@ -7,7 +7,8 @@ import org.springframework.boot.SpringApplication;
 
 @EnableCoreApplication
 @OpenAPIDefinition(servers = {
-        @Server(url = "http://localhost:6002", description = "Local Server.")
+        @Server(url = "https://mic-notificationservice-des.up.railway.app", description = "Production Server."),
+        @Server(url = "http://localhost:6003", description = "Local Server.")
 })
 public class MicNotificationserviceApplication {
 
