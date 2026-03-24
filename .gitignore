@@ -12,7 +12,7 @@ build/
 *.iml
 *.iws
 *.ipr
-out/
+/out/
 
 # =====================
 # IDE - Eclipse
