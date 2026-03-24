@@ -35,7 +35,7 @@ spring:
             enable: true
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-    enabled: true
+    enabled: false
 
   security:
     oauth2:
