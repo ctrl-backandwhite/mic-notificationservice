@@ -59,7 +59,7 @@ public class SecurityConfig {
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowedOrigins(Arrays.asList(
-                                "https://backandwhite.com",
+                                "https://auth-service-des.up.railway.app",
                                 "http://localhost:4200",
                                 "https://webapp-production-68d2.up.railway.app"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
