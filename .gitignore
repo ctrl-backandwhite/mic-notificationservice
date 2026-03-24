@@ -73,7 +73,9 @@ src/main/resources/application-local.yaml
 # =====================
 # Docker
 # =====================
+docker-compose.yml
 docker-compose.override.yml
+Dockerfile
 
 # =====================
 # JaCoCo / test reports
