@@ -1,0 +1,48 @@
+server:
+  port: ${SERVER_PORT:6003}
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+
+spring:
+  datasource:
+    url: ${NTF_DATABASE_URL}
+    username: ${NTF_DB_USER}
+    password: ${NTF_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  liquibase:
+    enabled: true
+  mail:
+    host: ${NTF_HOST_EMAIL}
+    port: ${NTF_PORT_EMAIL}
+    username: ${NTF_USER_EMAIL}
+    password: ${NTF_PASSWORD_EMAIL}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    bootstrap-servers: ${NFT_KAFKA_BOOTSTRAP_SERVERS}
+    enabled: true
+    consumer:
+      auto-offset-reset: earliest
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ISSUER_URI:http://localhost:6001}
+
+logging:
+  level:
+    root: INFO
+    com.backandwhite: DEBUG
+    org.springframework.security: DEBUG
