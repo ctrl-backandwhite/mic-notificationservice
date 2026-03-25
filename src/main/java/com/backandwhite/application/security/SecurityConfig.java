@@ -33,9 +33,7 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-ui.html",
                         "/error",
-                        "/actuator/health",
-                        "/api/v1/notifications/**",
-                        "/api/v1/notification-templates/**"
+                        "/actuator/health"
         };
 
         @Bean
