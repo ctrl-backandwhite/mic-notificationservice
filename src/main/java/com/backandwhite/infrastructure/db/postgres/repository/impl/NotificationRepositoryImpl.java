@@ -9,6 +9,7 @@ import com.backandwhite.infrastructure.db.postgres.repository.NotificationJpaRep
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
 @Log4j2
 @Repository
 @AllArgsConstructor
+@Transactional
 public class NotificationRepositoryImpl implements NotificationRepository {
 
     private final NotificationEntityMapper notificationEntityMapper;
@@ -31,11 +33,13 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Notification> findAll() {
         return notificationEntityMapper.toDomainList(notificationJpaRepositoryAdapter.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Notification getById(Long id) {
         NotificationEntity entity = notificationJpaRepositoryAdapter.findById(id).orElse(null);
         if (Objects.isNull(entity)) {
@@ -55,12 +59,14 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Notification> findByStatus(NotificationStatus status) {
         return notificationEntityMapper.toDomainList(
                 notificationJpaRepositoryAdapter.findByStatus(status));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Notification> findByRecipient(String recipient) {
         return notificationEntityMapper.toDomainList(
                 notificationJpaRepositoryAdapter.findByRecipient(recipient));

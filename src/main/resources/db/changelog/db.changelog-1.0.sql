@@ -44,3 +44,7 @@ INSERT INTO notification_templates (name, subject, template_file, type, active)
 VALUES ('welcome-email', 'Bienvenido a nuestra plataforma', 'email/welcome', 'EMAIL', TRUE),
        ('password-reset', 'Recuperación de contraseña', 'email/password-reset', 'EMAIL', TRUE),
        ('account-activation', 'Activa tu cuenta', 'email/account-activation', 'EMAIL', TRUE);
+
+--changeset mic-notificationservice:5
+INSERT INTO notification_templates (name, subject, template_file, type, active)
+VALUES ('cms-contact', 'Nuevo mensaje de contacto', 'email/cms-contact', 'EMAIL', TRUE);

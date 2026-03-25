@@ -44,10 +44,13 @@ public class EmailService {
         } catch (Exception e) {
             log.error("::> Error sending email to {}: {}", notification.getRecipient(), e.getMessage(), e);
             notification.setStatus(NotificationStatus.FAILED);
-            notification.setErrorMessage(e.getMessage());
+            notification.setErrorMessage(
+                    e.getMessage() != null ? e.getMessage().substring(0, Math.min(e.getMessage().length(), 1000))
+                            : "Unknown error");
             notification.setRetryCount(notification.getRetryCount() == null ? 1 : notification.getRetryCount() + 1);
             notificationRepository.update(notification);
-            throw new RuntimeException("Error al enviar el correo electrónico: " + e.getMessage(), e);
+            throw new RuntimeException("Error sending email to " + notification.getRecipient() + ": " + e.getMessage(),
+                    e);
         }
     }
 
