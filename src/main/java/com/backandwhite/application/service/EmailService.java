@@ -13,6 +13,7 @@ import org.thymeleaf.context.Context;
 
 import jakarta.mail.internet.MimeMessage;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 
 @Log4j2
@@ -59,6 +60,10 @@ public class EmailService {
         Map<String, Object> variables = notification.getVariables();
         if (variables != null) {
             variables.forEach(context::setVariable);
+            Object lang = variables.get("lang");
+            if (lang != null) {
+                context.setLocale(Locale.forLanguageTag(lang.toString()));
+            }
         }
 
         String templateFile = notification.getTemplate() != null

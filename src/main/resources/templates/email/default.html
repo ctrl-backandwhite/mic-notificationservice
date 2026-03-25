@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang ?: 'es'}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${subject ?: 'Notificación de NEXA'}">Notificación de NEXA</title>
+    <title th:text="${subject ?: #{email.default.title}}">Notificación de NEXA</title>
 </head>
 
 <body
@@ -18,16 +18,17 @@
                     <tr>
                         <td align="center"
                             style="background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);padding:40px 32px 32px;">
-                            <p style="margin:0 0 12px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;">
-                                NEXA</p>
-                            <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.7);">Tu plataforma eCommerce</p>
+                            <p style="margin:0 0 12px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;"
+                                th:text="#{email.common.brand}">NEXA</p>
+                            <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.7);"
+                                th:text="#{email.common.slogan}">Tu plataforma eCommerce</p>
                         </td>
                     </tr>
                     <!-- Body -->
                     <tr>
                         <td style="background:#ffffff;padding:36px 40px 32px;">
                             <p style="margin:0;font-size:15px;color:#334155;line-height:1.7;"
-                                th:text="${body ?: 'Tienes una nueva notificación.'}">
+                                th:text="${body ?: #{email.default.body}}">
                                 Tienes una nueva notificación.
                             </p>
                         </td>
@@ -35,9 +36,11 @@
                     <!-- Footer -->
                     <tr>
                         <td align="center" style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e6ebf0;">
-                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">&copy; 2026 NEXA. Todos los derechos
+                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;"
+                                th:text="#{email.common.footer.rights}">&copy; 2026 NEXA. Todos los derechos
                                 reservados.</p>
-                            <p style="margin:0;font-size:11px;color:#cbd5e1;">Este es un correo automático, por favor no
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;"
+                                th:text="#{email.common.footer.noreply}">Este es un correo automático, por favor no
                                 respondas a este mensaje.</p>
                         </td>
                     </tr>
