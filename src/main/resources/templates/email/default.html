@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang ?: 'es'}">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null and !#strings.isEmpty(lang)} ? ${lang} : 'es'">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${subject ?: #{email.default.title}}">Notificación de NEXA</title>
+    <title th:text="${subject != null and !#strings.isEmpty(subject)} ? ${subject} : #{email.default.title}">Notificación de NEXA</title>
 </head>
 
 <body
@@ -28,7 +28,7 @@
                     <tr>
                         <td style="background:#ffffff;padding:36px 40px 32px;">
                             <p style="margin:0;font-size:15px;color:#334155;line-height:1.7;"
-                                th:text="${body ?: #{email.default.body}}">
+                                th:text="${body != null and !#strings.isEmpty(body)} ? ${body} : #{email.default.body}">
                                 Tienes una nueva notificación.
                             </p>
                         </td>
