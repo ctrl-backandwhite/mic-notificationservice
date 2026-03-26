@@ -21,6 +21,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class EmailService {
 
+    private static final Locale DEFAULT_EMAIL_LOCALE = Locale.forLanguageTag("es");
+
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final NotificationRepository notificationRepository;
@@ -56,13 +58,16 @@ public class EmailService {
     }
 
     private String buildEmailContent(Notification notification) {
-        Context context = new Context();
+        Context context = new Context(DEFAULT_EMAIL_LOCALE);
         Map<String, Object> variables = notification.getVariables();
         if (variables != null) {
             variables.forEach(context::setVariable);
             Object lang = variables.get("lang");
             if (lang != null) {
-                context.setLocale(Locale.forLanguageTag(lang.toString()));
+                String langTag = lang.toString();
+                if (!langTag.isBlank()) {
+                    context.setLocale(Locale.forLanguageTag(langTag));
+                }
             }
         }
 

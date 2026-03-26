@@ -1,6 +1,10 @@
 spring:
   application:
     name: mic-notificationservice
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
   banner:
     charset: UTF-8
   profiles:
