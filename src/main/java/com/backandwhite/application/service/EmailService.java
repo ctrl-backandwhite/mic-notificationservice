@@ -5,12 +5,11 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.repository.NotificationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring6.context.SpringContext;
+import org.thymeleaf.context.Context;
 
 import jakarta.mail.internet.MimeMessage;
 import java.time.Instant;
@@ -27,7 +26,6 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final NotificationRepository notificationRepository;
-    private final ApplicationContext applicationContext;
 
     public void sendEmail(Notification notification) {
         try {
@@ -72,7 +70,7 @@ public class EmailService {
             }
         }
 
-        SpringContext context = new SpringContext(applicationContext, locale);
+        Context context = new Context(locale);
         if (variables != null) {
             variables.forEach(context::setVariable);
         }
