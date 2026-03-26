@@ -5,11 +5,12 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.repository.NotificationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.context.SpringContext;
 
 import jakarta.mail.internet.MimeMessage;
 import java.time.Instant;
@@ -26,6 +27,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final NotificationRepository notificationRepository;
+    private final ApplicationContext applicationContext;
 
     public void sendEmail(Notification notification) {
         try {
@@ -58,17 +60,21 @@ public class EmailService {
     }
 
     private String buildEmailContent(Notification notification) {
-        Context context = new Context(DEFAULT_EMAIL_LOCALE);
+        Locale locale = DEFAULT_EMAIL_LOCALE;
         Map<String, Object> variables = notification.getVariables();
         if (variables != null) {
-            variables.forEach(context::setVariable);
             Object lang = variables.get("lang");
             if (lang != null) {
                 String langTag = lang.toString();
                 if (!langTag.isBlank()) {
-                    context.setLocale(Locale.forLanguageTag(langTag));
+                    locale = Locale.forLanguageTag(langTag);
                 }
             }
+        }
+
+        SpringContext context = new SpringContext(applicationContext, locale);
+        if (variables != null) {
+            variables.forEach(context::setVariable);
         }
 
         String templateFile = notification.getTemplate() != null
