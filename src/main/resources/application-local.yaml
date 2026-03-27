@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url: ${NTF_DATABASE_URL}
-    username: ${NTF_DB_USER}
-    password: ${NTF_DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5404/db04
+    username: user04
+    password: pass04
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
