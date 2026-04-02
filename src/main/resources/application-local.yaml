@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5404/db04
-    username: user04
-    password: pass04
+    url: ${NTF_DATABASE_URL:jdbc:postgresql://localhost:5404/db04}
+    username: ${NTF_DB_USER:user04}
+    password: ${NTF_DB_PASSWORD:pass04}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -30,7 +30,9 @@ spring:
           starttls:
             enable: true
   kafka:
-    bootstrap-servers: ${NFT_KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${NFT_KAFKA_BOOTSTRAP_SERVERS:crossover.proxy.rlwy.net:32058}
+    listener:
+      auto-startup: false
     enabled: true
     consumer:
       auto-offset-reset: earliest
@@ -39,7 +41,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI:http://localhost:6001}
+          issuer-uri: ${ISSUER_URI:http://localhost:9000}
 
 logging:
   level:

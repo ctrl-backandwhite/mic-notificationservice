@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Has recibido una Tarjeta Regalo!</title>
+</head>
+
+<body
+    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f6f8;">
+        <tr>
+            <td align="center" style="padding:40px 16px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="560"
+                    style="max-width:560px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(15,23,42,0.10);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td align="center"
+                            style="background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);padding:40px 32px 32px;">
+                            <p style="margin:0 0 12px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;">
+                                NX036</p>
+                            <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.7);">Tu plataforma eCommerce</p>
+                        </td>
+                    </tr>
+
+                    <!-- Gift Card Visual -->
+                    <tr>
+                        <td align="center" style="background:#ffffff;padding:32px 40px 0;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center">
+                                        <!-- Gift card mockup -->
+                                        <table role="presentation" cellpadding="0" cellspacing="0"
+                                            th:style="'width:100%;max-width:440px;border-radius:16px;padding:28px 32px;box-shadow:0 8px 24px rgba(44,62,136,0.25);background:' + ${cardGradient}">
+                                            <tr>
+                                                <td>
+                                                    <p
+                                                        style="margin:0 0 4px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:2px;text-transform:uppercase;">
+                                                        Tarjeta Regalo</p>
+                                                    <p
+                                                        style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:3px;">
+                                                        NX036</p>
+                                                    <!-- Code -->
+                                                    <p
+                                                        style="margin:0 0 8px;font-size:11px;color:rgba(255,255,255,0.65);letter-spacing:1px;text-transform:uppercase;">
+                                                        Tu código</p>
+                                                    <p style="margin:0 0 20px;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:4px;font-family:'Courier New',monospace;"
+                                                        th:text="${code}">GC-XXXXXXX</p>
+                                                    <!-- Amount & Expiry -->
+                                                    <table role="presentation" cellpadding="0" cellspacing="0"
+                                                        width="100%">
+                                                        <tr>
+                                                            <td>
+                                                                <p
+                                                                    style="margin:0;font-size:11px;color:rgba(255,255,255,0.65);letter-spacing:1px;text-transform:uppercase;">
+                                                                    Saldo</p>
+                                                                <p
+                                                                    style="margin:0;font-size:20px;font-weight:700;color:#ffffff;">
+                                                                    <span th:text="${amount}">50.00</span>
+                                                                    <span th:text="${currency}">EUR</span>
+                                                                </p>
+                                                            </td>
+                                                            <td align="right"
+                                                                th:if="${expiryDate != null and !#strings.isEmpty(expiryDate)}">
+                                                                <p
+                                                                    style="margin:0;font-size:11px;color:rgba(255,255,255,0.65);letter-spacing:1px;text-transform:uppercase;">
+                                                                    Válida hasta</p>
+                                                                <p style="margin:0;font-size:14px;font-weight:600;color:#ffffff;"
+                                                                    th:text="${expiryDate}">2026-12-31</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="background:#ffffff;padding:28px 40px 32px;">
+                            <h1 style="margin:0 0 8px;font-size:22px;font-weight:500;color:#1e293b;text-align:center;">
+                                ¡Tienes un regalo esperándote!
+                            </h1>
+                            <p style="margin:0 0 24px;font-size:14px;color:#7a8796;text-align:center;line-height:1.6;">
+                                Alguien especial te ha enviado una Tarjeta Regalo de NX036
+                            </p>
+
+                            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.7;">
+                                Hola <strong
+                                    th:text="${recipientName != null and !#strings.isEmpty(recipientName)} ? ${recipientName} : 'allí'">allí</strong>,
+                            </p>
+
+                            <!-- Sender info -->
+                            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.7;"
+                                th:if="${buyerName != null and !#strings.isEmpty(buyerName)}">
+                                <strong th:text="${buyerName}">Tu amigo</strong> te ha enviado una Tarjeta Regalo por
+                                valor de
+                                <strong style="color:#1f9e9c;"><span th:text="${amount}">50.00</span> <span
+                                        th:text="${currency}">EUR</span></strong>
+                                para usar en NX036.
+                            </p>
+                            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.7;"
+                                th:unless="${buyerName != null and !#strings.isEmpty(buyerName)}">
+                                Alguien te ha enviado una Tarjeta Regalo por valor de
+                                <strong style="color:#1f9e9c;"><span th:text="${amount}">50.00</span> <span
+                                        th:text="${currency}">EUR</span></strong>
+                                para usar en NX036.
+                            </p>
+
+                            <!-- Personal message -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                th:if="${message != null and !#strings.isEmpty(message)}">
+                                <tr>
+                                    <td
+                                        style="background:#f0faf9;border-left:4px solid #1f9e9c;border-radius:0 8px 8px 0;padding:16px 20px;margin:0 0 24px;">
+                                        <p
+                                            style="margin:0 0 6px;font-size:11px;font-weight:700;color:#1f9e9c;letter-spacing:1px;text-transform:uppercase;">
+                                            Mensaje personal</p>
+                                        <p style="margin:0;font-size:15px;color:#334155;line-height:1.7;font-style:italic;"
+                                            th:text="${message}">"¡Espero que disfrutes tu regalo!"</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:24px;"></td>
+                                </tr>
+                            </table>
+
+                            <!-- Instructions -->
+                            <p style="margin:0 0 12px;font-size:15px;color:#334155;line-height:1.7;">
+                                Para canjear tu tarjeta regalo, introduce el código al finalizar tu compra:
+                            </p>
+
+                            <!-- Code box -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                style="margin-bottom:24px;">
+                                <tr>
+                                    <td align="center"
+                                        style="background:#f8fafc;border:2px dashed #1f9e9c;border-radius:12px;padding:20px;">
+                                        <p
+                                            style="margin:0 0 4px;font-size:11px;color:#7a8796;letter-spacing:1px;text-transform:uppercase;">
+                                            Tu código de tarjeta regalo</p>
+                                        <p style="margin:0;font-size:26px;font-weight:700;color:#1f9e9c;letter-spacing:5px;font-family:'Courier New',monospace;"
+                                            th:text="${code}">GC-XXXXXXX</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- CTA Button -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center" style="padding:0 0 24px;">
+                                        <a th:href="${storeUrl}"
+                                            style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#19b3a4,#149c90);color:#ffffff;text-decoration:none;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;box-shadow:0 4px 14px rgba(25,179,164,0.30);">
+                                            Ir a la tienda
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Expiry notice -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                th:if="${expiryDate != null and !#strings.isEmpty(expiryDate)}">
+                                <tr>
+                                    <td style="border-top:1px solid #e6ebf0;padding-top:20px;">
+                                        <p style="margin:0;font-size:12px;color:#94a3b8;line-height:1.6;">
+                                            Esta tarjeta regalo es válida hasta el <strong
+                                                th:text="${expiryDate}">2026-12-31</strong>.
+                                            Úsala antes de que expire para disfrutar de todos los beneficios.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e6ebf0;">
+                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">&copy; 2026 NX036. Todos los
+                                derechos reservados.</p>
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;">Este es un correo automático, por favor no
+                                respondas a este mensaje.</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
