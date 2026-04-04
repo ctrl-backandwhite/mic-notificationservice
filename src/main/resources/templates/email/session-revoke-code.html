@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null and !#strings.isEmpty(lang)} ? ${lang} : 'es'">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de verificación</title>
+</head>
+
+<body
+    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f6f8;">
+        <tr>
+            <td align="center" style="padding:40px 16px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="560"
+                    style="max-width:560px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(15,23,42,0.10);">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center"
+                            style="background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);padding:40px 32px 32px;">
+                            <p style="margin:0 0 12px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;">
+                                NX036</p>
+                            <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.7);">Tu plataforma eCommerce</p>
+                        </td>
+                    </tr>
+                    <!-- Icon -->
+                    <tr>
+                        <td align="center" style="background:#ffffff;padding:32px 0 0;">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center"
+                                        style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#19b3a4,#2c3e88);text-align:center;vertical-align:middle;">
+                                        <span style="font-size:28px;color:#ffffff;">&#128274;</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="background:#ffffff;padding:24px 40px 32px;">
+                            <h1 style="margin:0 0 8px;font-size:22px;font-weight:500;color:#1e293b;text-align:center;">
+                                Código de verificación</h1>
+                            <p style="margin:0 0 24px;font-size:14px;color:#7a8796;text-align:center;line-height:1.6;">
+                                Cierre de sesión remoto</p>
+
+                            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.7;">
+                                Hola <strong
+                                    th:text="${name != null and !#strings.isEmpty(name)} ? ${name} : 'Usuario'">Usuario</strong>,
+                            </p>
+                            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.7;">
+                                Recibimos una solicitud para cerrar una sesión activa en tu cuenta de
+                                <strong style="color:#19b3a4;">NX036</strong>.
+                                Usa el siguiente código de verificación para confirmar el cierre:
+                            </p>
+
+                            <!-- Code Display -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center" style="padding:24px 0;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td align="center"
+                                                    style="background:linear-gradient(135deg,#f0fdfa,#e0f2fe);border:2px dashed #19b3a4;border-radius:12px;padding:20px 48px;">
+                                                    <p style="margin:0;font-size:36px;font-weight:700;color:#1e293b;letter-spacing:12px;font-family:'Courier New',monospace;"
+                                                        th:text="${code}">123456</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Warning -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td
+                                        style="background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:16px;">
+                                        <p style="margin:0;font-size:13px;color:#92400e;line-height:1.5;">
+                                            &#9888;&#65039; Este código expirará en <strong>3 minutos</strong>.
+                                            No compartas este código con nadie.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Divider -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                style="margin-top:20px;">
+                                <tr>
+                                    <td style="border-top:1px solid #e6ebf0;padding-top:20px;">
+                                        <p style="margin:0;font-size:12px;color:#94a3b8;line-height:1.6;">
+                                            Si no solicitaste cerrar esta sesión, ignora este correo y revisa la
+                                            seguridad de tu cuenta.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e6ebf0;">
+                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">&copy; 2026 NX036. Todos los
+                                derechos reservados.</p>
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;">Este es un correo automático, por favor
+                                no respondas a este mensaje.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
