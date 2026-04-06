@@ -1,6 +1,7 @@
 package com.backandwhite.application.usecase.impl;
 
 import com.backandwhite.application.handler.NotificationCommandHandler;
+import com.backandwhite.application.mapper.NotificationUpdateMapper;
 import com.backandwhite.application.usecase.NotificationUseCase;
 import com.backandwhite.common.exception.EntityNotFoundException;
 import com.backandwhite.domain.model.Notification;
@@ -8,7 +9,6 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.repository.NotificationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +24,7 @@ public class NotificationUseCaseImpl implements NotificationUseCase {
 
     private final NotificationRepository notificationRepository;
     private final NotificationCommandHandler notificationCommandHandler;
+    private final NotificationUpdateMapper notificationUpdateMapper;
 
     @Override
     @Transactional
@@ -56,7 +57,7 @@ public class NotificationUseCaseImpl implements NotificationUseCase {
     public Notification update(Notification model, Long id) {
         log.debug("::> Updating notification {}", id);
         Notification existing = this.getById(id);
-        BeanUtils.copyProperties(model, existing, "id", "createdAt", "createdBy");
+        notificationUpdateMapper.updateFromModel(model, existing);
         notificationCommandHandler.validate(existing);
         return notificationRepository.update(existing);
     }

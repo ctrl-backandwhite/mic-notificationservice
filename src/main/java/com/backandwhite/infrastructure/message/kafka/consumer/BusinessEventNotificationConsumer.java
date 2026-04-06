@@ -1,6 +1,7 @@
-package com.backandwhite.application.service;
+package com.backandwhite.infrastructure.message.kafka.consumer;
 
 import com.backandwhite.application.handler.NotificationCommandHandler;
+import com.backandwhite.application.service.EmailService;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.*;
