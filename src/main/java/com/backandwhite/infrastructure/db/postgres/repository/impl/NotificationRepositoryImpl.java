@@ -71,4 +71,11 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         return notificationEntityMapper.toDomainList(
                 notificationJpaRepositoryAdapter.findByRecipient(recipient));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Notification> findByStatusAndRetryCountLessThan(NotificationStatus status, int maxRetries) {
+        return notificationEntityMapper.toDomainList(
+                notificationJpaRepositoryAdapter.findByStatusAndRetryCountLessThan(status, maxRetries));
+    }
 }

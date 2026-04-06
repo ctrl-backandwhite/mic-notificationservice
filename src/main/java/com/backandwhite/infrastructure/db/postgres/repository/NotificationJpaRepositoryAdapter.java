@@ -11,4 +11,6 @@ public interface NotificationJpaRepositoryAdapter extends JpaRepository<Notifica
     List<NotificationEntity> findByStatus(NotificationStatus status);
 
     List<NotificationEntity> findByRecipient(String recipient);
+
+    List<NotificationEntity> findByStatusAndRetryCountLessThan(NotificationStatus status, int maxRetries);
 }

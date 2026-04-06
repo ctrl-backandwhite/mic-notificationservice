@@ -20,4 +20,6 @@ public interface NotificationRepository {
     List<Notification> findByStatus(NotificationStatus status);
 
     List<Notification> findByRecipient(String recipient);
+
+    List<Notification> findByStatusAndRetryCountLessThan(NotificationStatus status, int maxRetries);
 }
