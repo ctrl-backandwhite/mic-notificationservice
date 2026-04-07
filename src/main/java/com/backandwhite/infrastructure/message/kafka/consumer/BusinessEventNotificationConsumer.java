@@ -245,7 +245,7 @@ public class BusinessEventNotificationConsumer {
         vars.put("buyerName", str(event.getBuyerName()));
         vars.put("code", str(event.getCode()));
         vars.put("amount", str(event.getAmount()));
-        vars.put("currency", str(event.getCurrency()) != null ? str(event.getCurrency()) : "EUR");
+        vars.put("currency", str(event.getCurrency()) != null ? str(event.getCurrency()) : "USD");
         vars.put("message", str(event.getMessage()));
         vars.put("expiryDate", formattedExpiry);
         vars.put("cardGradient", cardGradient);
