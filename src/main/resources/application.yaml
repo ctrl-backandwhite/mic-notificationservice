@@ -17,3 +17,34 @@ spring:
     type: caffeine
     caffeine:
       spec: maximumSize=500,expireAfterAccess=600s
+  kafka:
+    listener:
+      observation-enabled: true
+    template:
+      observation-enabled: true
+
+management:
+  tracing:
+    sampling:
+      probability: ${OTEL_SAMPLING_PROBABILITY:1.0}
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# --- OAuth2 Resource Server (opt-in) ---
+# To enable JWT validation, uncomment and set OAUTH2_ISSUER_URI + OAUTH2_JWK_SET_URI env vars
+#spring:
+#    security:
+#        oauth2:
+#            resourceserver:
+#                jwt:
+#                    issuer-uri: ${OAUTH2_ISSUER_URI:http://localhost:6001}
+#                    jwk-set-uri: ${OAUTH2_JWK_SET_URI:http://localhost:6001/oauth2/jwks}

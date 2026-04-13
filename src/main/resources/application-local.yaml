@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:6003}
+  port: ${SERVER_PORT:6004}
   ssl:
     enabled: ${SSL_ENABLED:false}
 
@@ -30,7 +30,7 @@ spring:
           starttls:
             enable: true
   kafka:
-    bootstrap-servers: ${NFT_KAFKA_BOOTSTRAP_SERVERS:crossover.proxy.rlwy.net:32058}
+    bootstrap-servers: ${NFT_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     listener:
       auto-startup: false
     enabled: true
