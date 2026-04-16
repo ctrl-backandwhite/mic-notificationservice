@@ -12,10 +12,14 @@ import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -477,109 +481,30 @@ class BusinessEventNotificationConsumerTest {
     @Nested
     class DesignGradientTests {
 
-        @Test
-        void premiumDesign_returnsGoldGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
+        static Stream<Arguments> designGradientArgs() {
+            return Stream.of(Arguments.of("premium", "#78350F"), Arguments.of("birthday", "#4C1D95"),
+                    Arguments.of("love", "#9D174D"), Arguments.of("nature", "#064E3B"),
+                    Arguments.of("ocean", "#1E3A5F"), Arguments.of("unknown", "#111827"),
+                    Arguments.of(null, "#111827"));
+        }
+
+        @ParameterizedTest
+        @MethodSource("designGradientArgs")
+        void design_returnsExpectedGradient(String designId, String expectedColor) {
+            var builder = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
                     .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00")
-                    .setDesignId("premium").setTimestamp("2025-01-01T00:00:00Z").build();
+                    .setTimestamp("2025-01-01T00:00:00Z");
+            if (designId != null) {
+                builder.setDesignId(designId);
+            }
             stubTemplateFound("gift-card-purchased");
             stubSaveReturnsInput();
 
-            consumer.onGiftCardPurchased(event);
+            consumer.onGiftCardPurchased(builder.build());
 
             ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
             verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#78350F");
-        }
-
-        @Test
-        void birthdayDesign_returnsPurpleGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
-                    .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00")
-                    .setDesignId("birthday").setTimestamp("2025-01-01T00:00:00Z").build();
-            stubTemplateFound("gift-card-purchased");
-            stubSaveReturnsInput();
-
-            consumer.onGiftCardPurchased(event);
-
-            ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-            verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#4C1D95");
-        }
-
-        @Test
-        void loveDesign_returnsPinkGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
-                    .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00").setDesignId("love")
-                    .setTimestamp("2025-01-01T00:00:00Z").build();
-            stubTemplateFound("gift-card-purchased");
-            stubSaveReturnsInput();
-
-            consumer.onGiftCardPurchased(event);
-
-            ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-            verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#9D174D");
-        }
-
-        @Test
-        void natureDesign_returnsGreenGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
-                    .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00")
-                    .setDesignId("nature").setTimestamp("2025-01-01T00:00:00Z").build();
-            stubTemplateFound("gift-card-purchased");
-            stubSaveReturnsInput();
-
-            consumer.onGiftCardPurchased(event);
-
-            ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-            verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#064E3B");
-        }
-
-        @Test
-        void oceanDesign_returnsBlueGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
-                    .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00").setDesignId("ocean")
-                    .setTimestamp("2025-01-01T00:00:00Z").build();
-            stubTemplateFound("gift-card-purchased");
-            stubSaveReturnsInput();
-
-            consumer.onGiftCardPurchased(event);
-
-            ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-            verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#1E3A5F");
-        }
-
-        @Test
-        void unknownDesign_returnsDefaultGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
-                    .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00")
-                    .setDesignId("unknown").setTimestamp("2025-01-01T00:00:00Z").build();
-            stubTemplateFound("gift-card-purchased");
-            stubSaveReturnsInput();
-
-            consumer.onGiftCardPurchased(event);
-
-            ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-            verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#111827");
-        }
-
-        @Test
-        void nullDesign_returnsDefaultGradient() {
-            GiftCardPurchasedEvent event = GiftCardPurchasedEvent.newBuilder().setGiftCardId("GC-1").setCode("CODE")
-                    .setRecipientName("Jane").setRecipientEmail("jane@test.com").setAmount("50.00")
-                    .setTimestamp("2025-01-01T00:00:00Z").build();
-            stubTemplateFound("gift-card-purchased");
-            stubSaveReturnsInput();
-
-            consumer.onGiftCardPurchased(event);
-
-            ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-            verify(notificationRepository).save(captor.capture());
-            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains("#111827");
+            assertThat((String) captor.getValue().getVariables().get("cardGradient")).contains(expectedColor);
         }
     }
 

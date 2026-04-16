@@ -7,30 +7,19 @@ import com.backandwhite.common.exception.ArgumentException;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class NotificationCommandHandlerTest {
 
     private final NotificationCommandHandler handler = new NotificationCommandHandler();
 
-    @Test
-    void validate_nullRecipient_throwsArgumentException() {
-        Notification notification = Notification.builder().recipient(null).type(NotificationType.EMAIL).build();
-
-        assertThatThrownBy(() -> handler.validate(notification)).isInstanceOf(ArgumentException.class)
-                .hasMessageContaining("destinatario");
-    }
-
-    @Test
-    void validate_blankRecipient_throwsArgumentException() {
-        Notification notification = Notification.builder().recipient("   ").type(NotificationType.EMAIL).build();
-
-        assertThatThrownBy(() -> handler.validate(notification)).isInstanceOf(ArgumentException.class)
-                .hasMessageContaining("destinatario");
-    }
-
-    @Test
-    void validate_emptyRecipient_throwsArgumentException() {
-        Notification notification = Notification.builder().recipient("").type(NotificationType.EMAIL).build();
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    void validate_invalidRecipient_throwsArgumentException(String recipient) {
+        Notification notification = Notification.builder().recipient(recipient).type(NotificationType.EMAIL).build();
 
         assertThatThrownBy(() -> handler.validate(notification)).isInstanceOf(ArgumentException.class)
                 .hasMessageContaining("destinatario");
