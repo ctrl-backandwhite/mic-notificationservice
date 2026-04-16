@@ -1,5 +1,8 @@
 package com.backandwhite.config;
 
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,10 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 @Log4j2
 @Testcontainers
@@ -44,8 +43,7 @@ public abstract class BaseIntegration {
     protected WebTestClient webTestClient;
 
     static {
-        org.testcontainers.utility.TestcontainersConfiguration.getInstance()
-                .updateUserConfig("checks.disable", "true");
+        org.testcontainers.utility.TestcontainersConfiguration.getInstance().updateUserConfig("checks.disable", "true");
     }
 
     public String getToken(List<String> roles) {
@@ -55,16 +53,14 @@ public abstract class BaseIntegration {
     @BeforeEach
     public void cleanAllTables() {
         if (webTestClient == null) {
-            webTestClient = WebTestClient.bindToServer()
-                    .baseUrl("http://localhost:" + port)
-                    .build();
+            webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
         }
         log.debug("Iniciando limpieza de todas las tablas...");
 
         List<String> tableNames;
         try {
-            tableNames = jdbcTemplate.queryForList(
-                    "SELECT tablename FROM pg_tables WHERE schemaname = 'public'", String.class);
+            tableNames = jdbcTemplate.queryForList("SELECT tablename FROM pg_tables WHERE schemaname = 'public'",
+                    String.class);
         } catch (Exception e) {
             log.error("Error al obtener los nombres de las tablas: {}", e.getMessage());
             throw new IllegalStateException("No se pudieron obtener los nombres de las tablas.", e);
@@ -78,8 +74,7 @@ public abstract class BaseIntegration {
                         return false;
                     }
                     return true;
-                })
-                .toList();
+                }).toList();
 
         for (String tableName : tablesToTruncate) {
             try {

@@ -3,10 +3,9 @@ package com.backandwhite.api.mapper;
 import com.backandwhite.api.dto.in.NotificationTemplateDtoIn;
 import com.backandwhite.api.dto.out.NotificationTemplateDtoOut;
 import com.backandwhite.domain.model.NotificationTemplate;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface NotificationTemplateDtoMapper {

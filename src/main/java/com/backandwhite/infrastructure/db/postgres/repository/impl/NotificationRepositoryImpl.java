@@ -1,20 +1,19 @@
 package com.backandwhite.infrastructure.db.postgres.repository.impl;
 
+import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
+
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.repository.NotificationRepository;
 import com.backandwhite.infrastructure.db.postgres.entity.NotificationEntity;
 import com.backandwhite.infrastructure.db.postgres.mapper.NotificationEntityMapper;
 import com.backandwhite.infrastructure.db.postgres.repository.NotificationJpaRepositoryAdapter;
+import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
-
-import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
 
 @Log4j2
 @Repository
@@ -27,8 +26,8 @@ public class NotificationRepositoryImpl implements NotificationRepository {
 
     @Override
     public Notification save(Notification notification) {
-        NotificationEntity entity = notificationJpaRepositoryAdapter.save(
-                notificationEntityMapper.toEntity(notification));
+        NotificationEntity entity = notificationJpaRepositoryAdapter
+                .save(notificationEntityMapper.toEntity(notification));
         return notificationEntityMapper.toDomain(entity);
     }
 
@@ -61,14 +60,19 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     @Override
     @Transactional(readOnly = true)
     public List<Notification> findByStatus(NotificationStatus status) {
-        return notificationEntityMapper.toDomainList(
-                notificationJpaRepositoryAdapter.findByStatus(status));
+        return notificationEntityMapper.toDomainList(notificationJpaRepositoryAdapter.findByStatus(status));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Notification> findByRecipient(String recipient) {
-        return notificationEntityMapper.toDomainList(
-                notificationJpaRepositoryAdapter.findByRecipient(recipient));
+        return notificationEntityMapper.toDomainList(notificationJpaRepositoryAdapter.findByRecipient(recipient));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Notification> findByStatusAndRetryCountLessThan(NotificationStatus status, int maxRetries) {
+        return notificationEntityMapper
+                .toDomainList(notificationJpaRepositoryAdapter.findByStatusAndRetryCountLessThan(status, maxRetries));
     }
 }

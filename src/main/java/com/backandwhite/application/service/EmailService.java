@@ -3,6 +3,10 @@ package com.backandwhite.application.service;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.repository.NotificationRepository;
+import jakarta.mail.internet.MimeMessage;
+import java.time.Instant;
+import java.util.Locale;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,14 +15,12 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import jakarta.mail.internet.MimeMessage;
-import java.time.Instant;
-import java.util.Map;
-
 @Log4j2
 @Service
 @AllArgsConstructor
 public class EmailService {
+
+    private static final Locale DEFAULT_EMAIL_LOCALE = Locale.forLanguageTag("es");
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
@@ -40,23 +42,33 @@ public class EmailService {
             notification.setSentAt(Instant.now());
             notificationRepository.update(notification);
 
-            log.debug("::> Email sent to {} with subject '{}'", notification.getRecipient(), notification.getSubject());
+            log.debug("::> Email sent successfully for notification id={}", notification.getId());
         } catch (Exception e) {
-            log.error("::> Error sending email to {}: {}", notification.getRecipient(), e.getMessage(), e);
+            log.error("::> Error sending email for notification id={}: {}", notification.getId(), e.getMessage(), e);
             notification.setStatus(NotificationStatus.FAILED);
-            notification.setErrorMessage(
-                    e.getMessage() != null ? e.getMessage().substring(0, Math.min(e.getMessage().length(), 1000))
-                            : "Unknown error");
+            notification.setErrorMessage(e.getMessage() != null
+                    ? e.getMessage().substring(0, Math.min(e.getMessage().length(), 1000))
+                    : "Unknown error");
             notification.setRetryCount(notification.getRetryCount() == null ? 1 : notification.getRetryCount() + 1);
             notificationRepository.update(notification);
-            throw new RuntimeException("Error sending email to " + notification.getRecipient() + ": " + e.getMessage(),
-                    e);
+            throw new RuntimeException("Error sending email for notification id=" + notification.getId(), e);
         }
     }
 
     private String buildEmailContent(Notification notification) {
-        Context context = new Context();
+        Locale locale = DEFAULT_EMAIL_LOCALE;
         Map<String, Object> variables = notification.getVariables();
+        if (variables != null) {
+            Object lang = variables.get("lang");
+            if (lang != null) {
+                String langTag = lang.toString();
+                if (!langTag.isBlank()) {
+                    locale = Locale.forLanguageTag(langTag);
+                }
+            }
+        }
+
+        Context context = new Context(locale);
         if (variables != null) {
             variables.forEach(context::setVariable);
         }

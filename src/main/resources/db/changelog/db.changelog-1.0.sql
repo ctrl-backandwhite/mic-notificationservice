@@ -48,3 +48,13 @@ VALUES ('welcome-email', 'Bienvenido a nuestra plataforma', 'email/welcome', 'EM
 --changeset mic-notificationservice:5
 INSERT INTO notification_templates (name, subject, template_file, type, active)
 VALUES ('cms-contact', 'Nuevo mensaje de contacto', 'email/cms-contact', 'EMAIL', TRUE);
+
+--changeset mic-notificationservice:6
+INSERT INTO notification_templates (name, subject, template_file, type, active)
+VALUES ('password-change-code', 'Código de verificación para cambio de contraseña', 'email/password-change-code', 'EMAIL', TRUE)
+ON CONFLICT (name) DO NOTHING;
+
+--changeset mic-notificationservice:7
+INSERT INTO notification_templates (name, subject, template_file, type, active)
+VALUES ('order-invoice', 'Factura de tu pedido', 'email/order-invoice', 'EMAIL', TRUE)
+ON CONFLICT (name) DO NOTHING;

@@ -2,7 +2,6 @@ package com.backandwhite.domain.repository;
 
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
-
 import java.util.List;
 
 public interface NotificationRepository {
@@ -20,4 +19,6 @@ public interface NotificationRepository {
     List<Notification> findByStatus(NotificationStatus status);
 
     List<Notification> findByRecipient(String recipient);
+
+    List<Notification> findByStatusAndRetryCountLessThan(NotificationStatus status, int maxRetries);
 }

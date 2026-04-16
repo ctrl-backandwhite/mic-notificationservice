@@ -1,5 +1,9 @@
 package com.backandwhite.api.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.backandwhite.api.dto.in.NotificationDtoIn;
 import com.backandwhite.api.dto.out.NotificationDtoOut;
 import com.backandwhite.api.mapper.NotificationDtoMapper;
@@ -10,6 +14,7 @@ import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.provider.NotificationProvider;
 import com.backandwhite.provider.NotificationTemplateProvider;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,12 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationControllerTest {
@@ -47,8 +46,7 @@ class NotificationControllerTest {
         NotificationDtoOut dtoOut = NotificationProvider.notificationDtoOut(NotificationProvider.NOTIFICATION_ID);
 
         when(mapper.toDomain(dtoIn)).thenReturn(domain);
-        when(templateUseCase.getById(dtoIn.getTemplateId()))
-                .thenReturn(NotificationTemplateProvider.template());
+        when(templateUseCase.getById(dtoIn.getTemplateId())).thenReturn(NotificationTemplateProvider.template());
         when(useCase.save(any())).thenReturn(saved);
         when(mapper.toDtoOut(saved)).thenReturn(dtoOut);
 
@@ -93,8 +91,8 @@ class NotificationControllerTest {
     @Test
     void findAll_returnsList() {
         List<Notification> notifications = List.of(NotificationProvider.notification());
-        List<NotificationDtoOut> dtoOuts = List.of(
-                NotificationProvider.notificationDtoOut(NotificationProvider.NOTIFICATION_ID));
+        List<NotificationDtoOut> dtoOuts = List
+                .of(NotificationProvider.notificationDtoOut(NotificationProvider.NOTIFICATION_ID));
 
         when(useCase.findAll()).thenReturn(notifications);
         when(mapper.toDtoOutList(notifications)).thenReturn(dtoOuts);
@@ -116,8 +114,8 @@ class NotificationControllerTest {
     @Test
     void findByStatus_returnsMatchingNotifications() {
         List<Notification> sent = List.of(NotificationProvider.notification());
-        List<NotificationDtoOut> dtoOuts = List.of(
-                NotificationProvider.notificationDtoOut(NotificationProvider.NOTIFICATION_ID));
+        List<NotificationDtoOut> dtoOuts = List
+                .of(NotificationProvider.notificationDtoOut(NotificationProvider.NOTIFICATION_ID));
 
         when(useCase.findByStatus(NotificationStatus.SENT)).thenReturn(sent);
         when(mapper.toDtoOutList(sent)).thenReturn(dtoOuts);

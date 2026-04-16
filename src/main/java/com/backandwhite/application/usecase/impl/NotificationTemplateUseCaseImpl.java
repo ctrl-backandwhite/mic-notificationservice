@@ -1,19 +1,18 @@
 package com.backandwhite.application.usecase.impl;
 
+import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
+
+import com.backandwhite.application.mapper.NotificationTemplateUpdateMapper;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.repository.NotificationTemplateRepository;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
@@ -21,6 +20,7 @@ import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
 public class NotificationTemplateUseCaseImpl implements NotificationTemplateUseCase {
 
     private final NotificationTemplateRepository notificationTemplateRepository;
+    private final NotificationTemplateUpdateMapper notificationTemplateUpdateMapper;
 
     @Override
     @Transactional
@@ -52,7 +52,7 @@ public class NotificationTemplateUseCaseImpl implements NotificationTemplateUseC
     public NotificationTemplate update(NotificationTemplate model, Long id) {
         log.debug("::> Updating notification template {}", id);
         NotificationTemplate existing = this.getById(id);
-        BeanUtils.copyProperties(model, existing, "id", "createdAt", "createdBy");
+        notificationTemplateUpdateMapper.updateFromModel(model, existing);
         return notificationTemplateRepository.update(existing);
     }
 

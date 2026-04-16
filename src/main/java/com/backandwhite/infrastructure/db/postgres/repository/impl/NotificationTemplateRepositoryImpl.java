@@ -1,19 +1,18 @@
 package com.backandwhite.infrastructure.db.postgres.repository.impl;
 
+import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
+
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.repository.NotificationTemplateRepository;
 import com.backandwhite.infrastructure.db.postgres.entity.NotificationTemplateEntity;
 import com.backandwhite.infrastructure.db.postgres.mapper.NotificationTemplateEntityMapper;
 import com.backandwhite.infrastructure.db.postgres.repository.NotificationTemplateJpaRepositoryAdapter;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.backandwhite.common.exception.Message.ENTITY_NOT_FOUND;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Repository;
 
 @Log4j2
 @Repository
@@ -25,15 +24,14 @@ public class NotificationTemplateRepositoryImpl implements NotificationTemplateR
 
     @Override
     public NotificationTemplate save(NotificationTemplate template) {
-        NotificationTemplateEntity entity = notificationTemplateJpaRepositoryAdapter.save(
-                notificationTemplateEntityMapper.toEntity(template));
+        NotificationTemplateEntity entity = notificationTemplateJpaRepositoryAdapter
+                .save(notificationTemplateEntityMapper.toEntity(template));
         return notificationTemplateEntityMapper.toDomain(entity);
     }
 
     @Override
     public List<NotificationTemplate> findAll() {
-        return notificationTemplateEntityMapper.toDomainList(
-                notificationTemplateJpaRepositoryAdapter.findAll());
+        return notificationTemplateEntityMapper.toDomainList(notificationTemplateJpaRepositoryAdapter.findAll());
     }
 
     @Override

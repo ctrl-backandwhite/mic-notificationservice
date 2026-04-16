@@ -4,14 +4,13 @@ import com.backandwhite.common.infrastructure.entity.AuditableEntity;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationType;
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.Map;
+import java.util.Objects;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import java.time.Instant;
-import java.util.Map;
-import java.util.Objects;
 
 @With
 @Getter
@@ -60,7 +59,8 @@ public class NotificationEntity extends AuditableEntity {
 
     @Override
     public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
+        if (object == null || getClass() != object.getClass())
+            return false;
         NotificationEntity that = (NotificationEntity) object;
         return Objects.equals(id, that.id) && Objects.equals(recipient, that.recipient);
     }

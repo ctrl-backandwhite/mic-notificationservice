@@ -1,11 +1,15 @@
 package com.backandwhite.api.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
 import com.backandwhite.api.dto.in.NotificationTemplateDtoIn;
 import com.backandwhite.api.dto.out.NotificationTemplateDtoOut;
 import com.backandwhite.api.mapper.NotificationTemplateDtoMapper;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.provider.NotificationTemplateProvider;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,11 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationTemplateControllerTest {
@@ -34,8 +33,8 @@ class NotificationTemplateControllerTest {
     void create_returnsCreated() {
         NotificationTemplateDtoIn dtoIn = NotificationTemplateProvider.templateDtoIn();
         NotificationTemplate domain = NotificationTemplateProvider.template();
-        NotificationTemplateDtoOut dtoOut = NotificationTemplateProvider.templateDtoOut(
-                NotificationTemplateProvider.TEMPLATE_ID);
+        NotificationTemplateDtoOut dtoOut = NotificationTemplateProvider
+                .templateDtoOut(NotificationTemplateProvider.TEMPLATE_ID);
 
         when(mapper.toDomain(dtoIn)).thenReturn(domain);
         when(useCase.save(domain)).thenReturn(domain);
@@ -50,14 +49,14 @@ class NotificationTemplateControllerTest {
     @Test
     void getById_returnsTemplate() {
         NotificationTemplate domain = NotificationTemplateProvider.template();
-        NotificationTemplateDtoOut dtoOut = NotificationTemplateProvider.templateDtoOut(
-                NotificationTemplateProvider.TEMPLATE_ID);
+        NotificationTemplateDtoOut dtoOut = NotificationTemplateProvider
+                .templateDtoOut(NotificationTemplateProvider.TEMPLATE_ID);
 
         when(useCase.getById(NotificationTemplateProvider.TEMPLATE_ID)).thenReturn(domain);
         when(mapper.toDtoOut(domain)).thenReturn(dtoOut);
 
-        ResponseEntity<NotificationTemplateDtoOut> response = controller.getById(
-                NotificationTemplateProvider.TEMPLATE_ID);
+        ResponseEntity<NotificationTemplateDtoOut> response = controller
+                .getById(NotificationTemplateProvider.TEMPLATE_ID);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(dtoOut);
@@ -66,8 +65,8 @@ class NotificationTemplateControllerTest {
     @Test
     void findAll_returnsList() {
         List<NotificationTemplate> templates = List.of(NotificationTemplateProvider.template());
-        List<NotificationTemplateDtoOut> dtoOuts = List.of(
-                NotificationTemplateProvider.templateDtoOut(NotificationTemplateProvider.TEMPLATE_ID));
+        List<NotificationTemplateDtoOut> dtoOuts = List
+                .of(NotificationTemplateProvider.templateDtoOut(NotificationTemplateProvider.TEMPLATE_ID));
 
         when(useCase.findAll()).thenReturn(templates);
         when(mapper.toDtoOutList(templates)).thenReturn(dtoOuts);
@@ -90,8 +89,8 @@ class NotificationTemplateControllerTest {
     void update_returnsUpdatedTemplate() {
         NotificationTemplateDtoIn dtoIn = NotificationTemplateProvider.templateDtoIn();
         NotificationTemplate domain = NotificationTemplateProvider.template();
-        NotificationTemplateDtoOut dtoOut = NotificationTemplateProvider.templateDtoOut(
-                NotificationTemplateProvider.TEMPLATE_ID);
+        NotificationTemplateDtoOut dtoOut = NotificationTemplateProvider
+                .templateDtoOut(NotificationTemplateProvider.TEMPLATE_ID);
 
         when(mapper.toDomain(dtoIn)).thenReturn(domain);
         when(useCase.update(domain, NotificationTemplateProvider.TEMPLATE_ID)).thenReturn(domain);
