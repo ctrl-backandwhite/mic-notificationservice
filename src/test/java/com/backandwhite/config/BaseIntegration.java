@@ -1,5 +1,6 @@
 package com.backandwhite.config;
 
+import com.backandwhite.core.test.JwtTestUtil;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;

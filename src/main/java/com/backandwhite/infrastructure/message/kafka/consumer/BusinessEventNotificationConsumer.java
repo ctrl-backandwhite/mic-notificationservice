@@ -235,7 +235,7 @@ public class BusinessEventNotificationConsumer {
         if (rawExpiry != null && !rawExpiry.isBlank()) {
             try {
                 formattedExpiry = LocalDate.parse(rawExpiry).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception _) {
+            } catch (Exception ignored) {
                 log.warn("::> Could not parse expiryDate '{}', using raw value", rawExpiry);
             }
         }

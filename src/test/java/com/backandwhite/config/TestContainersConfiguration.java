@@ -36,7 +36,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@TestConfiguration(proxyBeanMethods = false)
+@TestConfiguration(value = "notificationTestContainersConfiguration", proxyBeanMethods = false)
 public class TestContainersConfiguration {
 
     @Value("${test.postgres.username}")

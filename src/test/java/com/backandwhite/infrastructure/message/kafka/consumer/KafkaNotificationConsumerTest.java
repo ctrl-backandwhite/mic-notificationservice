@@ -88,13 +88,20 @@ class KafkaNotificationConsumerTest {
     void consume_templateNotFound_fallsBackToFileTemplate() {
         EmailNotificationEvent event = buildEvent("user@test.com", "Subject", "nonexistent", null);
         when(notificationTemplateUseCase.findByName("nonexistent")).thenReturn(Optional.empty());
-        when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(inv -> {
+            Notification n = inv.getArgument(0);
+            // At save time, file-based template must NOT be set (avoids
+            // TransientPropertyValueException)
+            assertThat(n.getTemplate()).isNull();
+            return n;
+        });
 
         consumer.consume(event);
 
-        ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-        verify(notificationRepository).save(captor.capture());
-        NotificationTemplate fallback = captor.getValue().getTemplate();
+        // After the flow, the file-based template is set for email rendering
+        ArgumentCaptor<Notification> sendCaptor = ArgumentCaptor.forClass(Notification.class);
+        verify(notificationSender).send(sendCaptor.capture());
+        NotificationTemplate fallback = sendCaptor.getValue().getTemplate();
         assertThat(fallback).isNotNull();
         assertThat(fallback.getName()).isEqualTo("nonexistent");
         assertThat(fallback.getTemplateFile()).isEqualTo("email/nonexistent");
