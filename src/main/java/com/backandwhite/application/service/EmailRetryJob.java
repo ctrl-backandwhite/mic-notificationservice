@@ -3,13 +3,12 @@ package com.backandwhite.application.service;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.repository.NotificationRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Log4j2
 @Component
@@ -25,8 +24,8 @@ public class EmailRetryJob {
     private int maxRetries = DEFAULT_MAX_RETRIES;
 
     /**
-     * Runs every 5 minutes to retry FAILED email notifications
-     * that have not exceeded the maximum retry count.
+     * Runs every 5 minutes to retry FAILED email notifications that have not
+     * exceeded the maximum retry count.
      */
     @Scheduled(fixedDelayString = "${app.email.retry.interval-ms:300000}", initialDelay = 60000)
     public void retryFailedEmails() {
@@ -46,15 +45,10 @@ public class EmailRetryJob {
                 notificationRepository.update(notification);
 
                 emailService.sendEmail(notification);
-                log.info("::> Email retry successful for notification id={} to {}",
-                        notification.getId(), notification.getRecipient());
+                log.info("::> Email retry successful for notification id={}", notification.getId());
             } catch (Exception e) {
-                log.warn("::> Email retry failed for notification id={} to {} (attempt {}/{}): {}",
-                        notification.getId(),
-                        notification.getRecipient(),
-                        notification.getRetryCount(),
-                        maxRetries,
-                        e.getMessage());
+                log.warn("::> Email retry failed for notification id={} (attempt {}/{}): {}", notification.getId(),
+                        notification.getRetryCount(), maxRetries, e.getMessage());
             }
         }
     }

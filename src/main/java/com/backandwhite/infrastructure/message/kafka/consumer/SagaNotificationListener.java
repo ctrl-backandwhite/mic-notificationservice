@@ -9,19 +9,18 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.repository.NotificationRepository;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 /**
- * Consumes saga.order.notify-failure events and sends a payment failure
- * email to the customer as part of the Saga compensation flow.
+ * Consumes saga.order.notify-failure events and sends a payment failure email
+ * to the customer as part of the Saga compensation flow.
  */
 @Log4j2
 @Service
@@ -39,7 +38,7 @@ public class SagaNotificationListener {
     public void onNotifyFailure(SagaNotifyFailureEvent event) {
         String orderId = str(event.getOrderId());
         String recipient = str(event.getEmail());
-        log.info("::> [Saga] Received notify-failure: orderId={}, recipient={}", orderId, recipient);
+        log.info("::> [Saga] Received notify-failure: orderId={}", orderId);
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("orderId", orderId);
@@ -48,33 +47,23 @@ public class SagaNotificationListener {
         variables.put("currency", str(event.getCurrency()));
         variables.put("reason", str(event.getReason()));
 
-        Notification notification = Notification.builder()
-                .recipient(recipient)
+        Notification notification = Notification.builder().recipient(recipient)
                 .subject("Tu pedido no pudo ser procesado — " + str(event.getOrderReference()))
-                .type(NotificationType.EMAIL)
-                .status(NotificationStatus.PENDING)
-                .variables(variables)
-                .retryCount(0)
+                .type(NotificationType.EMAIL).status(NotificationStatus.PENDING).variables(variables).retryCount(0)
                 .build();
 
         // Attempt to resolve template from DB; fall back to file template
         Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(TEMPLATE_NAME);
         if (templateOpt.isEmpty()) {
             log.warn("::> [Saga] Template '{}' not found in DB. Falling back to file template.", TEMPLATE_NAME);
-            notification.setTemplate(NotificationTemplate.builder()
-                    .name(TEMPLATE_NAME)
-                    .templateFile("email/" + TEMPLATE_NAME)
-                    .active(true)
-                    .build());
+            notification.setTemplate(NotificationTemplate.builder().name(TEMPLATE_NAME)
+                    .templateFile("email/" + TEMPLATE_NAME).active(true).build());
         } else {
             NotificationTemplate template = templateOpt.get();
             if (Boolean.FALSE.equals(template.getActive())) {
                 log.warn("::> [Saga] Template '{}' is inactive. Falling back to file template.", TEMPLATE_NAME);
-                notification.setTemplate(NotificationTemplate.builder()
-                        .name(TEMPLATE_NAME)
-                        .templateFile("email/" + TEMPLATE_NAME)
-                        .active(true)
-                        .build());
+                notification.setTemplate(NotificationTemplate.builder().name(TEMPLATE_NAME)
+                        .templateFile("email/" + TEMPLATE_NAME).active(true).build());
             } else {
                 notification.setTemplate(template);
             }
@@ -85,8 +74,7 @@ public class SagaNotificationListener {
             emailService.sendEmail(saved);
             log.info("::> [Saga] Failure notification sent for orderId={}", orderId);
         } catch (Exception e) {
-            log.error("::> [Saga] Failed to send failure notification for orderId={}: {}",
-                    orderId, e.getMessage(), e);
+            log.error("::> [Saga] Failed to send failure notification for orderId={}: {}", orderId, e.getMessage(), e);
         }
     }
 

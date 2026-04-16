@@ -10,6 +10,11 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.repository.NotificationRepository;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,16 +22,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 /**
- * Consumes business domain events and triggers email notifications.
- * Follows the same pattern as KafkaNotificationConsumer:
- * build Notification → validate → resolve template → persist → send email.
+ * Consumes business domain events and triggers email notifications. Follows the
+ * same pattern as KafkaNotificationConsumer: build Notification → validate →
+ * resolve template → persist → send email.
  */
 @Log4j2
 @Service
@@ -54,7 +53,7 @@ public class BusinessEventNotificationConsumer {
             log.warn("::> order.created without email, skipping notification. orderId={}", str(event.getOrderId()));
             return;
         }
-        log.info("::> Notification: order.created orderId={}, email={}", str(event.getOrderId()), email);
+        log.info("::> Notification: order.created orderId={}", str(event.getOrderId()));
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("orderId", str(event.getOrderId()));
@@ -187,7 +186,7 @@ public class BusinessEventNotificationConsumer {
         String email = str(event.getEmail());
         if (email == null)
             return;
-        log.info("::> Notification: newsletter.subscribed email={}", email);
+        log.info("::> Notification: newsletter.subscribed");
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("source", str(event.getSource()));
@@ -199,9 +198,8 @@ public class BusinessEventNotificationConsumer {
 
     @KafkaListener(topics = AppConstants.KAFKA_TOPIC_STOCK_LOW_ALERT, groupId = AppConstants.KAFKA_GROUP_NOTIFICATIONS, containerFactory = "avroKafkaListenerContainerFactory")
     public void onStockLowAlert(StockLowAlertEvent event) {
-        log.warn("::> STOCK LOW ALERT: productId={}, variantId={}, stock={}, threshold={}",
-                str(event.getProductId()), str(event.getVariantId()),
-                event.getCurrentStock(), event.getThreshold());
+        log.warn("::> STOCK LOW ALERT: productId={}, variantId={}, stock={}, threshold={}", str(event.getProductId()),
+                str(event.getVariantId()), event.getCurrentStock(), event.getThreshold());
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("productId", str(event.getProductId()));
@@ -224,15 +222,13 @@ public class BusinessEventNotificationConsumer {
                     str(event.getGiftCardId()));
             return;
         }
-        log.info("::> Notification: giftcard.purchased giftCardId={}, recipient={}", str(event.getGiftCardId()),
-                recipientEmail);
+        log.info("::> Notification: giftcard.purchased giftCardId={}", str(event.getGiftCardId()));
 
         String rawExpiry = str(event.getExpiryDate());
         String formattedExpiry = rawExpiry;
         if (rawExpiry != null && !rawExpiry.isBlank()) {
             try {
-                formattedExpiry = LocalDate.parse(rawExpiry)
-                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                formattedExpiry = LocalDate.parse(rawExpiry).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             } catch (Exception ex) {
                 log.warn("::> Could not parse expiryDate '{}', using raw value", rawExpiry);
             }
@@ -259,13 +255,8 @@ public class BusinessEventNotificationConsumer {
     private void sendNotification(String recipient, String subject, String templateName,
             Map<String, Object> variables) {
         try {
-            Notification notification = Notification.builder()
-                    .recipient(recipient)
-                    .subject(subject)
-                    .type(NotificationType.EMAIL)
-                    .status(NotificationStatus.PENDING)
-                    .variables(variables)
-                    .retryCount(0)
+            Notification notification = Notification.builder().recipient(recipient).subject(subject)
+                    .type(NotificationType.EMAIL).status(NotificationStatus.PENDING).variables(variables).retryCount(0)
                     .build();
 
             notificationCommandHandler.validate(notification);
@@ -287,10 +278,9 @@ public class BusinessEventNotificationConsumer {
 
             Notification saved = notificationRepository.save(notification);
             emailService.sendEmail(saved);
-            log.info("::> Notification sent: id={}, template={}, recipient={}", saved.getId(), templateName, recipient);
+            log.info("::> Notification sent: id={}, template={}", saved.getId(), templateName);
         } catch (Exception e) {
-            log.error("::> Failed to send notification: template={}, recipient={}, error={}", templateName, recipient,
-                    e.getMessage(), e);
+            log.error("::> Failed to send notification: template={}, error={}", templateName, e.getMessage(), e);
         }
     }
 

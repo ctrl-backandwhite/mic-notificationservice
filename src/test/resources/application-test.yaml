@@ -19,6 +19,11 @@ spring:
   kafka:
     enabled: false
 
+management:
+  health:
+    mail:
+      enabled: false
+
 logging:
   level:
     com.backandwhite.common.exception.Message: ERROR

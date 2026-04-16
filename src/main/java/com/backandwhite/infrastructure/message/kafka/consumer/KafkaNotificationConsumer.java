@@ -10,14 +10,13 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.repository.NotificationRepository;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Log4j2
 @Service
@@ -31,19 +30,19 @@ public class KafkaNotificationConsumer {
 
     @KafkaListener(topics = AppConstants.KAFKA_TOPIC_NOTIFICATION_EMAIL, groupId = AppConstants.KAFKA_GROUP_NOTIFICATIONS, containerFactory = "avroKafkaListenerContainerFactory")
     public void consume(EmailNotificationEvent event) {
-        log.debug("::> Received notification event for recipient: {}", event.getRecipient());
+        log.debug("::> Received notification event for template: {}", event.getTemplateName());
         processEvent(event);
     }
 
     @KafkaListener(topics = AppConstants.KAFKA_TOPIC_CMS_CONTACT_MESSAGE_RECEIVED, groupId = AppConstants.KAFKA_GROUP_NOTIFICATIONS, containerFactory = "avroKafkaListenerContainerFactory")
     public void consumeContactMessage(EmailNotificationEvent event) {
-        log.debug("::> Received CMS contact message event for recipient: {}", event.getRecipient());
+        log.debug("::> Received CMS contact message event");
         processEvent(event);
     }
 
     /**
-     * Lógica común de procesamiento de eventos de notificación.
-     * Construye el dominio, valida, resuelve el template y envía el correo.
+     * Lógica común de procesamiento de eventos de notificación. Construye el
+     * dominio, valida, resuelve el template y envía el correo.
      */
     private void processEvent(EmailNotificationEvent event) {
         // Convertir Map<String, String> (Avro) a Map<String, Object> (dominio)
@@ -54,12 +53,8 @@ public class KafkaNotificationConsumer {
 
         Notification notification = Notification.builder()
                 .recipient(event.getRecipient() != null ? event.getRecipient() : null)
-                .subject(event.getSubject() != null ? event.getSubject() : null)
-                .type(NotificationType.EMAIL)
-                .status(NotificationStatus.PENDING)
-                .variables(variables)
-                .retryCount(0)
-                .build();
+                .subject(event.getSubject() != null ? event.getSubject() : null).type(NotificationType.EMAIL)
+                .status(NotificationStatus.PENDING).variables(variables).retryCount(0).build();
 
         // Validar notificación antes de persistir
         notificationCommandHandler.validate(notification);

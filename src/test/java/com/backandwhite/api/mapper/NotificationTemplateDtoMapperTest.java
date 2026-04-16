@@ -1,5 +1,7 @@
 package com.backandwhite.api.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.backandwhite.api.dto.in.NotificationTemplateDtoIn;
 import com.backandwhite.api.dto.out.NotificationTemplateDtoOut;
 import com.backandwhite.domain.model.NotificationTemplate;
@@ -9,10 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @ActiveProfiles("test")
-@SpringBootTest(classes = { NotificationTemplateDtoMapperImpl.class })
+@SpringBootTest(classes = {NotificationTemplateDtoMapperImpl.class})
 class NotificationTemplateDtoMapperTest {
 
     @Autowired

@@ -3,13 +3,11 @@ package com.backandwhite.api.mapper;
 import com.backandwhite.api.dto.in.NotificationDtoIn;
 import com.backandwhite.api.dto.out.NotificationDtoOut;
 import com.backandwhite.domain.model.Notification;
-import com.backandwhite.domain.model.NotificationStatus;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring", uses = { NotificationTemplateDtoMapper.class })
+@Mapper(componentModel = "spring", uses = {NotificationTemplateDtoMapper.class})
 public interface NotificationDtoMapper {
 
     @Mapping(target = "id", source = "id")

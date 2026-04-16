@@ -7,43 +7,48 @@ import com.backandwhite.api.mapper.NotificationTemplateDtoMapper;
 import com.backandwhite.api.validation.CreateValidation;
 import com.backandwhite.api.validation.UpdateValidation;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
+import com.backandwhite.common.security.annotation.NxAdmin;
 import com.backandwhite.domain.model.NotificationTemplate;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notification-templates")
 @Tag(name = "Notification Template Operations.", description = "Operations related to notification templates.")
-public class NotificationTemplateController implements BaseApi<NotificationTemplateDtoIn, NotificationTemplateDtoOut, Long> {
+public class NotificationTemplateController
+        implements
+            BaseApi<NotificationTemplateDtoIn, NotificationTemplateDtoOut, Long> {
 
     private final NotificationTemplateDtoMapper mapper;
     private final NotificationTemplateUseCase useCase;
 
+    @NxAdmin
     @Override
     @PostMapping
     public ResponseEntity<NotificationTemplateDtoOut> create(
-            @Validated({ Default.class, CreateValidation.class }) @RequestBody NotificationTemplateDtoIn dto) {
+            @Validated({Default.class, CreateValidation.class}) @RequestBody NotificationTemplateDtoIn dto) {
         NotificationTemplate saved = useCase.save(mapper.toDomain(dto));
         return new ResponseEntity<>(mapper.toDtoOut(saved), HttpStatus.CREATED);
     }
 
+    @NxAdmin
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<NotificationTemplateDtoOut> update(
-            @Validated({ Default.class, UpdateValidation.class }) @RequestBody NotificationTemplateDtoIn dto,
+            @Validated({Default.class, UpdateValidation.class}) @RequestBody NotificationTemplateDtoIn dto,
             @PathVariable Long id) {
         NotificationTemplate updated = useCase.update(mapper.toDomain(dto), id);
         return new ResponseEntity<>(mapper.toDtoOut(updated), HttpStatus.OK);
     }
 
+    @NxAdmin
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
@@ -51,12 +56,14 @@ public class NotificationTemplateController implements BaseApi<NotificationTempl
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @NxAdmin
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<NotificationTemplateDtoOut> getById(@PathVariable Long id) {
         return new ResponseEntity<>(mapper.toDtoOut(useCase.getById(id)), HttpStatus.OK);
     }
 
+    @NxAdmin
     @Override
     @GetMapping
     public ResponseEntity<List<NotificationTemplateDtoOut>> findAll() {

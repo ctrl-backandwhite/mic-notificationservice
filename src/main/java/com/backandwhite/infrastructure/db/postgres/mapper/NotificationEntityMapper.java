@@ -2,12 +2,11 @@ package com.backandwhite.infrastructure.db.postgres.mapper;
 
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.infrastructure.db.postgres.entity.NotificationEntity;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring", uses = { NotificationTemplateEntityMapper.class })
+@Mapper(componentModel = "spring", uses = {NotificationTemplateEntityMapper.class})
 public interface NotificationEntityMapper {
 
     @Mapping(target = "id", source = "id")

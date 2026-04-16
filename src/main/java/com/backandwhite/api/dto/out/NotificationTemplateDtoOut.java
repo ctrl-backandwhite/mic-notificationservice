@@ -1,9 +1,8 @@
 package com.backandwhite.api.dto.out;
 
 import com.backandwhite.domain.model.NotificationType;
-import lombok.*;
-
 import java.time.Instant;
+import lombok.*;
 
 @Data
 @With

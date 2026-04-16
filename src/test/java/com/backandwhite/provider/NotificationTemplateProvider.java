@@ -24,72 +24,35 @@ public final class NotificationTemplateProvider {
     }
 
     public static NotificationTemplate template() {
-        return NotificationTemplate.builder()
-                .id(TEMPLATE_ID)
-                .name(TEMPLATE_NAME)
-                .subject(TEMPLATE_SUBJECT)
-                .templateFile(TEMPLATE_FILE)
-                .type(TEMPLATE_TYPE)
-                .active(TEMPLATE_ACTIVE)
-                .createdAt(AuditProvider.CREATED_AT)
-                .updatedAt(AuditProvider.UPDATED_AT)
-                .createdBy(AuditProvider.CREATED_BY)
-                .updatedBy(AuditProvider.UPDATED_BY)
-                .build();
+        return NotificationTemplate.builder().id(TEMPLATE_ID).name(TEMPLATE_NAME).subject(TEMPLATE_SUBJECT)
+                .templateFile(TEMPLATE_FILE).type(TEMPLATE_TYPE).active(TEMPLATE_ACTIVE)
+                .createdAt(AuditProvider.CREATED_AT).updatedAt(AuditProvider.UPDATED_AT)
+                .createdBy(AuditProvider.CREATED_BY).updatedBy(AuditProvider.UPDATED_BY).build();
     }
 
     public static NotificationTemplate otherTemplate() {
-        return NotificationTemplate.builder()
-                .id(OTHER_TEMPLATE_ID)
-                .name(OTHER_TEMPLATE_NAME)
-                .subject(OTHER_TEMPLATE_SUBJECT)
-                .templateFile(OTHER_TEMPLATE_FILE)
-                .type(TEMPLATE_TYPE)
-                .active(TEMPLATE_ACTIVE)
-                .createdAt(AuditProvider.CREATED_AT)
-                .updatedAt(AuditProvider.UPDATED_AT)
-                .createdBy(AuditProvider.CREATED_BY)
-                .updatedBy(AuditProvider.UPDATED_BY)
-                .build();
+        return NotificationTemplate.builder().id(OTHER_TEMPLATE_ID).name(OTHER_TEMPLATE_NAME)
+                .subject(OTHER_TEMPLATE_SUBJECT).templateFile(OTHER_TEMPLATE_FILE).type(TEMPLATE_TYPE)
+                .active(TEMPLATE_ACTIVE).createdAt(AuditProvider.CREATED_AT).updatedAt(AuditProvider.UPDATED_AT)
+                .createdBy(AuditProvider.CREATED_BY).updatedBy(AuditProvider.UPDATED_BY).build();
     }
 
     public static NotificationTemplateEntity templateEntity() {
-        return NotificationTemplateEntity.builder()
-                .id(TEMPLATE_ID)
-                .name(TEMPLATE_NAME)
-                .subject(TEMPLATE_SUBJECT)
-                .templateFile(TEMPLATE_FILE)
-                .type(TEMPLATE_TYPE)
-                .active(TEMPLATE_ACTIVE)
-                .createdAt(AuditProvider.CREATED_AT)
-                .updatedAt(AuditProvider.UPDATED_AT)
-                .createdBy(AuditProvider.CREATED_BY)
-                .updatedBy(AuditProvider.UPDATED_BY)
-                .build();
+        return NotificationTemplateEntity.builder().id(TEMPLATE_ID).name(TEMPLATE_NAME).subject(TEMPLATE_SUBJECT)
+                .templateFile(TEMPLATE_FILE).type(TEMPLATE_TYPE).active(TEMPLATE_ACTIVE)
+                .createdAt(AuditProvider.CREATED_AT).updatedAt(AuditProvider.UPDATED_AT)
+                .createdBy(AuditProvider.CREATED_BY).updatedBy(AuditProvider.UPDATED_BY).build();
     }
 
     public static NotificationTemplateDtoIn templateDtoIn() {
-        return NotificationTemplateDtoIn.builder()
-                .name(TEMPLATE_NAME)
-                .subject(TEMPLATE_SUBJECT)
-                .templateFile(TEMPLATE_FILE)
-                .type(TEMPLATE_TYPE)
-                .active(TEMPLATE_ACTIVE)
-                .build();
+        return NotificationTemplateDtoIn.builder().name(TEMPLATE_NAME).subject(TEMPLATE_SUBJECT)
+                .templateFile(TEMPLATE_FILE).type(TEMPLATE_TYPE).active(TEMPLATE_ACTIVE).build();
     }
 
     public static NotificationTemplateDtoOut templateDtoOut(Long id) {
-        return NotificationTemplateDtoOut.builder()
-                .id(id)
-                .name(TEMPLATE_NAME)
-                .subject(TEMPLATE_SUBJECT)
-                .templateFile(TEMPLATE_FILE)
-                .type(TEMPLATE_TYPE)
-                .active(TEMPLATE_ACTIVE)
-                .createdAt(AuditProvider.CREATED_AT)
-                .updatedAt(AuditProvider.UPDATED_AT)
-                .createdBy(AuditProvider.CREATED_BY)
-                .updatedBy(AuditProvider.UPDATED_BY)
-                .build();
+        return NotificationTemplateDtoOut.builder().id(id).name(TEMPLATE_NAME).subject(TEMPLATE_SUBJECT)
+                .templateFile(TEMPLATE_FILE).type(TEMPLATE_TYPE).active(TEMPLATE_ACTIVE)
+                .createdAt(AuditProvider.CREATED_AT).updatedAt(AuditProvider.UPDATED_AT)
+                .createdBy(AuditProvider.CREATED_BY).updatedBy(AuditProvider.UPDATED_BY).build();
     }
 }

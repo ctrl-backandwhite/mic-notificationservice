@@ -1,19 +1,5 @@
 package com.backandwhite.application.usecase.impl;
 
-import com.backandwhite.application.handler.NotificationCommandHandler;
-import com.backandwhite.common.exception.EntityNotFoundException;
-import com.backandwhite.domain.model.Notification;
-import com.backandwhite.domain.model.NotificationStatus;
-import com.backandwhite.domain.repository.NotificationRepository;
-import com.backandwhite.provider.NotificationProvider;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
 import static com.backandwhite.provider.NotificationProvider.failedNotification;
 import static com.backandwhite.provider.NotificationProvider.notification;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +8,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.backandwhite.application.handler.NotificationCommandHandler;
+import com.backandwhite.common.exception.EntityNotFoundException;
+import com.backandwhite.domain.model.Notification;
+import com.backandwhite.domain.model.NotificationStatus;
+import com.backandwhite.domain.repository.NotificationRepository;
+import com.backandwhite.provider.NotificationProvider;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationUseCaseImplTest {

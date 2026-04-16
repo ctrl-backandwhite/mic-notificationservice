@@ -1,5 +1,7 @@
 package com.backandwhite.infrastructure.db.postgres.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.infrastructure.db.postgres.entity.NotificationEntity;
 import com.backandwhite.provider.NotificationProvider;
@@ -8,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @ActiveProfiles("test")
-@SpringBootTest(classes = { NotificationEntityMapperImpl.class, NotificationTemplateEntityMapperImpl.class })
+@SpringBootTest(classes = {NotificationEntityMapperImpl.class, NotificationTemplateEntityMapperImpl.class})
 class NotificationEntityMapperTest {
 
     @Autowired

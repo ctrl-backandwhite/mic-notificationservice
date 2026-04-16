@@ -2,7 +2,6 @@ package com.backandwhite.domain.repository;
 
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
-
 import java.util.List;
 
 public interface NotificationRepository {

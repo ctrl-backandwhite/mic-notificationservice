@@ -3,10 +3,9 @@ package com.backandwhite.infrastructure.db.postgres.entity;
 import com.backandwhite.common.infrastructure.entity.AuditableEntity;
 import com.backandwhite.domain.model.NotificationType;
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Objects;
 
 @With
 @Getter
@@ -40,7 +39,8 @@ public class NotificationTemplateEntity extends AuditableEntity {
 
     @Override
     public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
+        if (object == null || getClass() != object.getClass())
+            return false;
         NotificationTemplateEntity that = (NotificationTemplateEntity) object;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
