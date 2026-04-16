@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Notification Template Operations.", description = "Operations related to notification templates.")
 public class NotificationTemplateController
         implements
-            BaseApi<NotificationTemplateDtoIn, NotificationTemplateDtoOut, Long> {
+        BaseApi<NotificationTemplateDtoIn, NotificationTemplateDtoOut, Long> {
 
     private final NotificationTemplateDtoMapper mapper;
     private final NotificationTemplateUseCase useCase;
@@ -33,7 +33,7 @@ public class NotificationTemplateController
     @Override
     @PostMapping
     public ResponseEntity<NotificationTemplateDtoOut> create(
-            @Validated({Default.class, CreateValidation.class}) @RequestBody NotificationTemplateDtoIn dto) {
+            @Validated({ Default.class, CreateValidation.class }) @RequestBody NotificationTemplateDtoIn dto) {
         NotificationTemplate saved = useCase.save(mapper.toDomain(dto));
         return new ResponseEntity<>(mapper.toDtoOut(saved), HttpStatus.CREATED);
     }
@@ -42,7 +42,7 @@ public class NotificationTemplateController
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<NotificationTemplateDtoOut> update(
-            @Validated({Default.class, UpdateValidation.class}) @RequestBody NotificationTemplateDtoIn dto,
+            @Validated({ Default.class, UpdateValidation.class }) @RequestBody NotificationTemplateDtoIn dto,
             @PathVariable Long id) {
         NotificationTemplate updated = useCase.update(mapper.toDomain(dto), id);
         return new ResponseEntity<>(mapper.toDtoOut(updated), HttpStatus.OK);
