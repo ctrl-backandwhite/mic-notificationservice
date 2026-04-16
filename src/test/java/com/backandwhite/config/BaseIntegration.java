@@ -76,12 +76,17 @@ public abstract class BaseIntegration {
                     return true;
                 }).toList();
 
-        for (String tableName : tablesToTruncate) {
+        if (!tablesToTruncate.isEmpty()) {
+            String joined = tablesToTruncate.stream().map(t -> "\"" + t + "\"")
+                    .collect(java.util.stream.Collectors.joining(", "));
             try {
-                jdbcTemplate.execute("TRUNCATE TABLE " + tableName + " RESTART IDENTITY CASCADE");
-                log.debug("Table truncated: {}", tableName);
+                jdbcTemplate.execute("TRUNCATE TABLE " + joined + " RESTART IDENTITY CASCADE"); // NOSONAR — table names
+                                                                                                // validated by
+                                                                                                // VALID_TABLE_NAME_PATTERN
+                                                                                                // regex
+                log.debug("Tables truncated: {}", joined);
             } catch (Exception e) {
-                log.error("Error truncating table '{}': {}", tableName, e.getMessage());
+                log.error("Error truncating tables '{}': {}", joined, e.getMessage());
             }
         }
         log.debug("Table cleanup completed.");
