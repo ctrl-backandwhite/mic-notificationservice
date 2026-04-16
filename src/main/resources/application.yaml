@@ -12,7 +12,7 @@ spring:
   banner:
     charset: UTF-8
   profiles:
-    active: ${PROFILE:local}
+    active: ${PROFILE:local},kibana
   cache:
     type: caffeine
     caffeine:
