@@ -55,22 +55,22 @@ public abstract class BaseIntegration {
         if (webTestClient == null) {
             webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
         }
-        log.debug("Iniciando limpieza de todas las tablas...");
+        log.debug("Starting cleanup of all tables...");
 
         List<String> tableNames;
         try {
             tableNames = jdbcTemplate.queryForList("SELECT tablename FROM pg_tables WHERE schemaname = 'public'",
                     String.class);
         } catch (Exception e) {
-            log.error("Error al obtener los nombres de las tablas: {}", e.getMessage());
-            throw new IllegalStateException("No se pudieron obtener los nombres de las tablas.", e);
+            log.error("Error getting table names: {}", e.getMessage());
+            throw new IllegalStateException("Could not retrieve table names.", e);
         }
 
         List<String> tablesToTruncate = tableNames.stream()
                 .filter(tableName -> EXCLUDED_TABLE_PREFIXES.stream().noneMatch(tableName::startsWith))
                 .filter(tableName -> {
                     if (!VALID_TABLE_NAME_PATTERN.matcher(tableName).matches()) {
-                        log.warn("Nombre de tabla inválido '{}', no se truncará.", tableName);
+                        log.warn("Invalid table name '{}', will not truncate.", tableName);
                         return false;
                     }
                     return true;
@@ -79,11 +79,11 @@ public abstract class BaseIntegration {
         for (String tableName : tablesToTruncate) {
             try {
                 jdbcTemplate.execute("TRUNCATE TABLE " + tableName + " RESTART IDENTITY CASCADE");
-                log.debug("Tabla truncada: {}", tableName);
+                log.debug("Table truncated: {}", tableName);
             } catch (Exception e) {
-                log.error("Error al truncar la tabla '{}': {}", tableName, e.getMessage());
+                log.error("Error truncating table '{}': {}", tableName, e.getMessage());
             }
         }
-        log.debug("Limpieza de tablas finalizada.");
+        log.debug("Table cleanup completed.");
     }
 }

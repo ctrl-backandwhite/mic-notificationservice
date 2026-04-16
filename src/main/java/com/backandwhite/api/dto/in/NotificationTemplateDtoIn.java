@@ -15,21 +15,21 @@ import lombok.*;
 public class NotificationTemplateDtoIn {
 
     @NotEmpty
-    @Schema(description = "Nombre único del template", example = "welcome-email")
+    @Schema(description = "Unique template name", example = "welcome-email")
     private String name;
 
     @NotEmpty
-    @Schema(description = "Asunto del correo electrónico", example = "Bienvenido a nuestra plataforma")
+    @Schema(description = "Email subject", example = "Welcome to our platform")
     private String subject;
 
     @NotEmpty
-    @Schema(description = "Nombre del archivo de template Thymeleaf (sin extensión)", example = "email/welcome")
+    @Schema(description = "Thymeleaf template file name (without extension)", example = "email/welcome")
     private String templateFile;
 
     @NotNull
-    @Schema(description = "Tipo de notificación", example = "EMAIL")
+    @Schema(description = "Notification type", example = "EMAIL")
     private NotificationType type;
 
-    @Schema(description = "Indica si el template está activo", example = "true", defaultValue = "true")
+    @Schema(description = "Indicates whether the template is active", example = "true", defaultValue = "true")
     private Boolean active;
 }

@@ -253,7 +253,7 @@ public class BusinessEventNotificationConsumer {
         vars.put("cardGradient", cardGradient);
         vars.put("storeUrl", storeUrl + giftcardActivatePath);
 
-        sendNotification(recipientEmail, "¡Has recibido una Tarjeta Regalo!", "gift-card-purchased", vars);
+        sendNotification(recipientEmail, "You've received a Gift Card!", "gift-card-purchased", vars);
     }
 
     // ─── Common ─────────────────────────────────────────────────────

@@ -18,19 +18,19 @@ public class NotificationDtoIn {
 
     @NotEmpty
     @Email
-    @Schema(description = "Destinatario del correo", example = "usuario@ejemplo.com")
+    @Schema(description = "Email recipient", example = "user@example.com")
     private String recipient;
 
-    @Schema(description = "Asunto del correo", example = "Confirmación de registro")
+    @Schema(description = "Email subject", example = "Registration confirmation")
     private String subject;
 
     @NotNull
-    @Schema(description = "Tipo de notificación", example = "EMAIL")
+    @Schema(description = "Notification type", example = "EMAIL")
     private NotificationType type;
 
-    @Schema(description = "ID del template a usar")
+    @Schema(description = "Template ID to use", example = "1")
     private Long templateId;
 
-    @Schema(description = "Variables a inyectar en el template")
+    @Schema(description = "Variables to inject into the template", example = "{\"name\": \"John\", \"code\": \"123456\"}")
     private Map<String, Object> variables;
 }

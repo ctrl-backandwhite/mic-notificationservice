@@ -14,11 +14,10 @@ public class NotificationCommandHandler {
 
     public void validate(Notification notification) {
         if (Objects.isNull(notification.getRecipient()) || notification.getRecipient().isBlank()) {
-            throw new ArgumentException(VALIDATION_ERROR.getCode(),
-                    "El destinatario de la notificación es obligatorio.");
+            throw new ArgumentException(VALIDATION_ERROR.getCode(), "Notification recipient is required.");
         }
         if (Objects.isNull(notification.getType())) {
-            throw new ArgumentException(VALIDATION_ERROR.getCode(), "El tipo de notificación es obligatorio.");
+            throw new ArgumentException(VALIDATION_ERROR.getCode(), "Notification type is required.");
         }
         log.debug("::> Notification validated successfully");
     }

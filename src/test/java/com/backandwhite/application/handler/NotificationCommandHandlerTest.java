@@ -22,7 +22,7 @@ class NotificationCommandHandlerTest {
         Notification notification = Notification.builder().recipient(recipient).type(NotificationType.EMAIL).build();
 
         assertThatThrownBy(() -> handler.validate(notification)).isInstanceOf(ArgumentException.class)
-                .hasMessageContaining("destinatario");
+                .hasMessageContaining("recipient");
     }
 
     @Test
@@ -30,7 +30,7 @@ class NotificationCommandHandlerTest {
         Notification notification = Notification.builder().recipient("user@test.com").type(null).build();
 
         assertThatThrownBy(() -> handler.validate(notification)).isInstanceOf(ArgumentException.class)
-                .hasMessageContaining("tipo");
+                .hasMessageContaining("type");
     }
 
     @Test

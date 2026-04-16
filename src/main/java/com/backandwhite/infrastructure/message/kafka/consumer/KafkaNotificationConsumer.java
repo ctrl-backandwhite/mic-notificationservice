@@ -41,11 +41,11 @@ public class KafkaNotificationConsumer {
     }
 
     /**
-     * Lógica común de procesamiento de eventos de notificación. Construye el
-     * dominio, valida, resuelve el template y envía el correo.
+     * Common notification event processing logic. Builds the domain object,
+     * validates, resolves the template, and sends the email.
      */
     private void processEvent(EmailNotificationEvent event) {
-        // Convertir Map<String, String> (Avro) a Map<String, Object> (dominio)
+        // Convert Map<String, String> (Avro) to Map<String, Object> (domain)
         Map<String, Object> variables = new HashMap<>();
         if (event.getVariables() != null) {
             variables.putAll(event.getVariables());
@@ -56,10 +56,10 @@ public class KafkaNotificationConsumer {
                 .subject(event.getSubject() != null ? event.getSubject() : null).type(NotificationType.EMAIL)
                 .status(NotificationStatus.PENDING).variables(variables).retryCount(0).build();
 
-        // Validar notificación antes de persistir
+        // Validate notification before persisting
         notificationCommandHandler.validate(notification);
 
-        // Resolver template
+        // Resolve template
         String templateName = event.getTemplateName() != null ? event.getTemplateName() : null;
         resolveTemplate(notification, templateName);
 

@@ -10,14 +10,14 @@ public final class NotificationTemplateProvider {
 
     public static final Long TEMPLATE_ID = 1L;
     public static final String TEMPLATE_NAME = "welcome-email";
-    public static final String TEMPLATE_SUBJECT = "Bienvenido a nuestra plataforma";
+    public static final String TEMPLATE_SUBJECT = "Welcome to our platform";
     public static final String TEMPLATE_FILE = "email/welcome";
     public static final NotificationType TEMPLATE_TYPE = NotificationType.EMAIL;
     public static final Boolean TEMPLATE_ACTIVE = true;
 
     public static final Long OTHER_TEMPLATE_ID = 2L;
     public static final String OTHER_TEMPLATE_NAME = "password-reset";
-    public static final String OTHER_TEMPLATE_SUBJECT = "Recuperación de contraseña";
+    public static final String OTHER_TEMPLATE_SUBJECT = "Password recovery";
     public static final String OTHER_TEMPLATE_FILE = "email/password-reset";
 
     private NotificationTemplateProvider() {

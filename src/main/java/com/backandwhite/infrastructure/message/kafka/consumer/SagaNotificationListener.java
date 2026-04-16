@@ -48,7 +48,7 @@ public class SagaNotificationListener {
         variables.put("reason", str(event.getReason()));
 
         Notification notification = Notification.builder().recipient(recipient)
-                .subject("Tu pedido no pudo ser procesado — " + str(event.getOrderReference()))
+                .subject("Your order could not be processed — " + str(event.getOrderReference()))
                 .type(NotificationType.EMAIL).status(NotificationStatus.PENDING).variables(variables).retryCount(0)
                 .build();
 
