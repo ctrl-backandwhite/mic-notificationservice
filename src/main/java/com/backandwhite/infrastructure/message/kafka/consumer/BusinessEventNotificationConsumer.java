@@ -267,12 +267,15 @@ public class BusinessEventNotificationConsumer {
 
             notificationCommandHandler.validate(notification);
 
+            // Resolve template — file-based templates are NOT set on notification
+            // before save to avoid TransientPropertyValueException
+            NotificationTemplate fileTemplate = null;
             Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
             if (templateOpt.isEmpty()) {
                 log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName,
                         templateName);
-                notification.setTemplate(NotificationTemplate.builder().name(templateName)
-                        .templateFile("email/" + templateName).active(true).build());
+                fileTemplate = NotificationTemplate.builder().name(templateName).templateFile("email/" + templateName)
+                        .active(true).build();
             } else {
                 NotificationTemplate template = templateOpt.get();
                 if (Boolean.FALSE.equals(template.getActive())) {
@@ -286,6 +289,12 @@ public class BusinessEventNotificationConsumer {
             }
 
             Notification saved = notificationRepository.save(notification);
+
+            // Restore file-based template after persist (needed for email rendering)
+            if (fileTemplate != null) {
+                saved.setTemplate(fileTemplate);
+            }
+
             notificationSender.send(saved);
             log.info("::> Notification sent: id={}, template={}", saved.getId(), templateName);
         } catch (Exception e) {
