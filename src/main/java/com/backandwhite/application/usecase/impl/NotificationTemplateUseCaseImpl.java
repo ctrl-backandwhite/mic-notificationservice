@@ -51,7 +51,7 @@ public class NotificationTemplateUseCaseImpl implements NotificationTemplateUseC
     @Transactional
     public NotificationTemplate update(NotificationTemplate model, Long id) {
         log.debug("::> Updating notification template {}", id);
-        NotificationTemplate existing = this.getById(id);
+        NotificationTemplate existing = findExistingById(id);
         notificationTemplateUpdateMapper.updateFromModel(model, existing);
         return notificationTemplateRepository.update(existing);
     }
@@ -59,7 +59,7 @@ public class NotificationTemplateUseCaseImpl implements NotificationTemplateUseC
     @Override
     @Transactional
     public void delete(Long id) {
-        this.getById(id);
+        findExistingById(id);
         log.debug("::> Deleting notification template with id {}", id);
         notificationTemplateRepository.delete(id);
     }
@@ -69,5 +69,13 @@ public class NotificationTemplateUseCaseImpl implements NotificationTemplateUseC
     public Optional<NotificationTemplate> findByName(String name) {
         log.debug("::> Getting notification template by name: {}", name);
         return notificationTemplateRepository.findByName(name);
+    }
+
+    private NotificationTemplate findExistingById(Long id) {
+        NotificationTemplate model = notificationTemplateRepository.getById(id);
+        if (Objects.isNull(model)) {
+            throw ENTITY_NOT_FOUND.toEntityNotFound("NotificationTemplate", id);
+        }
+        return model;
     }
 }

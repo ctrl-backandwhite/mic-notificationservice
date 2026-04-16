@@ -5,12 +5,12 @@ import com.backandwhite.api.dto.in.NotificationDtoIn;
 import com.backandwhite.api.dto.out.NotificationDtoOut;
 import com.backandwhite.api.mapper.NotificationDtoMapper;
 import com.backandwhite.api.validation.CreateValidation;
-import com.backandwhite.application.service.EmailService;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.application.usecase.NotificationUseCase;
 import com.backandwhite.common.security.annotation.NxAdmin;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
+import com.backandwhite.domain.port.NotificationSender;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import java.util.List;
@@ -29,7 +29,7 @@ public class NotificationController implements BaseApi<NotificationDtoIn, Notifi
     private final NotificationDtoMapper mapper;
     private final NotificationUseCase useCase;
     private final NotificationTemplateUseCase templateUseCase;
-    private final EmailService emailService;
+    private final NotificationSender notificationSender;
 
     @NxAdmin
     @Override
@@ -43,7 +43,7 @@ public class NotificationController implements BaseApi<NotificationDtoIn, Notifi
         }
 
         Notification saved = useCase.save(notification);
-        emailService.sendEmail(saved);
+        notificationSender.send(saved);
         return new ResponseEntity<>(mapper.toDtoOut(saved), HttpStatus.CREATED);
     }
 

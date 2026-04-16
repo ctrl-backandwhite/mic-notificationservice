@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null and !#strings.isEmpty(lang)} ? ${lang} : 'es'">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factura de tu pedido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@200;300;400;600;700&display=swap"
+        rel="stylesheet">
+    <title th:text="#{email.invoice.headerTitle}">Factura de tu pedido</title>
 </head>
 
 <body
-    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto Condensed','Roboto','Segoe UI',Arial,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f6f8;">
         <tr>
             <td align="center" style="padding:40px 16px;">
@@ -18,13 +20,18 @@
                     <!-- Header -->
                     <tr>
                         <td align="center"
-                            style="background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);padding:36px 32px 28px;">
-                            <p style="margin:0 0 6px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;">
-                                NX036</p>
-                            <p style="margin:0 0 16px;font-size:13px;color:rgba(255,255,255,0.70);">Tu plataforma
-                                eCommerce</p>
-                            <p style="margin:0;font-size:18px;font-weight:600;color:#ffffff;letter-spacing:0.5px;">
-                                Factura de compra</p>
+                            style="background:#ffffff;padding:28px 32px 20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 12px;">
+                                <tr>
+                                    <td align="center" valign="middle"
+                                        style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1a5276,#2e86c1);box-shadow:0 0 0 2px #ffffff,0 0 0 4px #2e86c1;text-align:center;vertical-align:middle;">
+                                        <span
+                                            style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:1px;">NX</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin:0;font-size:18px;font-weight:600;color:#1e293b;letter-spacing:0.5px;"
+                                th:text="#{email.invoice.headerTitle}">Factura de compra</p>
                         </td>
                     </tr>
 
@@ -35,26 +42,22 @@
                                 style="border-bottom:1px solid #e6ebf0;padding-bottom:20px;">
                                 <tr>
                                     <td style="vertical-align:top;">
-                                        <p
-                                            style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                            Factura</p>
+                                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                            th:text="#{email.invoice.invoiceLabel}">Factura</p>
                                         <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:#1e293b;"
                                             th:text="${invoiceNumber}">INV-000001</p>
-                                        <p
-                                            style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                            Pedido</p>
+                                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                            th:text="#{email.invoice.orderLabel}">Pedido</p>
                                         <p style="margin:0;font-size:15px;font-weight:600;color:#1e293b;"
                                             th:text="${orderNumber}">ORD-000001</p>
                                     </td>
                                     <td style="vertical-align:top;text-align:right;">
-                                        <p
-                                            style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                            Fecha</p>
+                                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                            th:text="#{email.invoice.dateLabel}">Fecha</p>
                                         <p style="margin:0 0 12px;font-size:14px;color:#334155;" th:text="${issueDate}">
                                             2026-04-07</p>
-                                        <p
-                                            style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                            Método de pago</p>
+                                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                            th:text="#{email.invoice.paymentMethodLabel}">Método de pago</p>
                                         <p style="margin:0;font-size:14px;color:#334155;" th:text="${paymentMethod}">
                                             Tarjeta</p>
                                     </td>
@@ -70,9 +73,8 @@
                                 style="background:#f8fafc;border-radius:10px;padding:16px 20px;">
                                 <tr>
                                     <td>
-                                        <p
-                                            style="margin:0 0 8px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                            Cliente</p>
+                                        <p style="margin:0 0 8px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                            th:text="#{email.invoice.customerLabel}">Cliente</p>
                                         <p style="margin:0 0 4px;font-size:15px;font-weight:600;color:#1e293b;"
                                             th:text="${customerName}">Juan Pérez</p>
                                         <p style="margin:0 0 2px;font-size:13px;color:#64748b;"
@@ -90,35 +92,29 @@
                     <!-- Line Items Header -->
                     <tr>
                         <td style="background:#ffffff;padding:24px 40px 0;">
-                            <p
-                                style="margin:0 0 12px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                Detalle de productos</p>
+                            <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                th:text="#{email.invoice.productsTitle}">Detalle de productos</p>
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
                                 style="border-bottom:2px solid #e6ebf0;">
                                 <tr>
-                                    <td
-                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;">
-                                        Producto</td>
+                                    <td style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;"
+                                        th:text="#{email.invoice.productHeader}">Producto</td>
                                     <td align="center"
-                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;width:50px;">
-                                        Cant.</td>
+                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;width:50px;"
+                                        th:text="#{email.invoice.quantityHeader}">Cant.</td>
                                     <td align="right"
-                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;width:80px;">
-                                        Precio</td>
+                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;width:80px;"
+                                        th:text="#{email.invoice.priceHeader}">Precio</td>
                                     <td align="right"
-                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;width:80px;">
-                                        Total</td>
+                                        style="padding:8px 0;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;width:80px;"
+                                        th:text="#{email.invoice.totalHeader}">Total</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
-                    <!--
-                        Line items are pre-rendered as HTML in the "linesHtml" variable
-                        by the order service to avoid Thymeleaf preprocessing complexity.
-                    -->
+                    <!-- Line items (pre-rendered HTML) -->
                     <tr th:utext="${linesHtml}">
-                        <!-- Fallback preview row -->
                         <td style="background:#ffffff;padding:0 40px;">
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
                                 style="border-bottom:1px solid #f1f5f9;">
@@ -130,8 +126,8 @@
                                             style="margin:0;font-size:11px;color:#94a3b8;font-family:'Courier New',monospace;">
                                             SKU-001</p>
                                     </td>
-                                    <td align="center" style="padding:12px 0;font-size:14px;color:#334155;width:50px;">
-                                        1</td>
+                                    <td align="center" style="padding:12px 0;font-size:14px;color:#334155;width:50px;">1
+                                    </td>
                                     <td align="right" style="padding:12px 0;font-size:14px;color:#334155;width:80px;">
                                         29.99 <span style="font-size:11px;color:#94a3b8;">EUR</span></td>
                                     <td align="right"
@@ -146,50 +142,50 @@
                     <tr>
                         <td style="background:#ffffff;padding:20px 40px 28px;">
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-                                <!-- Subtotal -->
                                 <tr>
-                                    <td style="padding:4px 0;font-size:14px;color:#64748b;">Subtotal</td>
+                                    <td style="padding:4px 0;font-size:14px;color:#64748b;"
+                                        th:text="#{email.invoice.subtotalLabel}">Subtotal</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#334155;">
                                         <span th:text="${subtotal}">0.00</span>
                                         <span style="font-size:11px;color:#94a3b8;" th:text="${currency}">EUR</span>
                                     </td>
                                 </tr>
-                                <!-- Shipping -->
                                 <tr>
-                                    <td style="padding:4px 0;font-size:14px;color:#64748b;">Envío</td>
+                                    <td style="padding:4px 0;font-size:14px;color:#64748b;"
+                                        th:text="#{email.invoice.shippingLabel}">Envío</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#334155;">
                                         <span th:text="${shipping}">0.00</span>
                                         <span style="font-size:11px;color:#94a3b8;" th:text="${currency}">EUR</span>
                                     </td>
                                 </tr>
-                                <!-- Tax -->
                                 <tr>
-                                    <td style="padding:4px 0;font-size:14px;color:#64748b;">Impuestos</td>
+                                    <td style="padding:4px 0;font-size:14px;color:#64748b;"
+                                        th:text="#{email.invoice.taxLabel}">Impuestos</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#334155;">
                                         <span th:text="${tax}">0.00</span>
                                         <span style="font-size:11px;color:#94a3b8;" th:text="${currency}">EUR</span>
                                     </td>
                                 </tr>
-                                <!-- Discount (only shown when > 0) -->
                                 <tr th:if="${discount != null and discount != '0.00' and discount != '0'}">
-                                    <td style="padding:4px 0;font-size:14px;color:#059669;">Descuento cupón</td>
+                                    <td style="padding:4px 0;font-size:14px;color:#059669;"
+                                        th:text="#{email.invoice.discountLabel}">Descuento cupón</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#059669;">
                                         −<span th:text="${discount}">0.00</span>
                                         <span style="font-size:11px;" th:text="${currency}">EUR</span>
                                     </td>
                                 </tr>
-                                <!-- Gift Card (only shown when > 0) -->
                                 <tr th:if="${giftCard != null and giftCard != '0.00' and giftCard != '0'}">
-                                    <td style="padding:4px 0;font-size:14px;color:#7c3aed;">Tarjeta regalo</td>
+                                    <td style="padding:4px 0;font-size:14px;color:#7c3aed;"
+                                        th:text="#{email.invoice.giftCardLabel}">Tarjeta regalo</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#7c3aed;">
                                         −<span th:text="${giftCard}">0.00</span>
                                         <span style="font-size:11px;" th:text="${currency}">EUR</span>
                                     </td>
                                 </tr>
-                                <!-- Loyalty (only shown when > 0) -->
                                 <tr
                                     th:if="${loyaltyDiscount != null and loyaltyDiscount != '0.00' and loyaltyDiscount != '0'}">
-                                    <td style="padding:4px 0;font-size:14px;color:#d97706;">Puntos de fidelidad</td>
+                                    <td style="padding:4px 0;font-size:14px;color:#d97706;"
+                                        th:text="#{email.invoice.loyaltyLabel}">Puntos de fidelidad</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#d97706;">
                                         −<span th:text="${loyaltyDiscount}">0.00</span>
                                         <span style="font-size:11px;" th:text="${currency}">EUR</span>
@@ -201,9 +197,8 @@
                                         <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
                                             style="border-top:2px solid #1e293b;">
                                             <tr>
-                                                <td
-                                                    style="padding:12px 0;font-size:18px;font-weight:700;color:#1e293b;">
-                                                    Total</td>
+                                                <td style="padding:12px 0;font-size:18px;font-weight:700;color:#1e293b;"
+                                                    th:text="#{email.invoice.grandTotalLabel}">Total</td>
                                                 <td align="right"
                                                     style="padding:12px 0;font-size:20px;font-weight:700;color:#1f9e9c;">
                                                     <span th:text="${total}">0.00</span>
@@ -224,11 +219,11 @@
                                 style="background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);border-radius:12px;padding:20px;">
                                 <tr>
                                     <td align="center">
-                                        <p style="margin:0 0 6px;font-size:16px;font-weight:600;color:#1e293b;">
-                                            ¡Gracias por tu compra!</p>
-                                        <p style="margin:0;font-size:13px;color:#64748b;line-height:1.6;">
-                                            Tu pedido ha sido procesado correctamente. Recibirás actualizaciones sobre
-                                            el estado de tu envío.
+                                        <p style="margin:0 0 6px;font-size:16px;font-weight:600;color:#1e293b;"
+                                            th:text="#{email.invoice.thankYou}">¡Gracias por tu compra!</p>
+                                        <p style="margin:0;font-size:13px;color:#64748b;line-height:1.6;"
+                                            th:text="#{email.invoice.processed}">
+                                            Tu pedido ha sido procesado correctamente.
                                         </p>
                                     </td>
                                 </tr>
@@ -243,20 +238,21 @@
                                 style="border:1px solid #e6ebf0;border-radius:12px;overflow:hidden;">
                                 <tr>
                                     <td style="padding:24px;vertical-align:middle;">
-                                        <p
-                                            style="margin:0 0 8px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">
-                                            Tu factura digital</p>
-                                        <p style="margin:0 0 16px;font-size:13px;color:#64748b;line-height:1.5;">
-                                            Descarga o consulta tu factura en cualquier momento desde el siguiente
-                                            enlace.
-                                            También puedes escanear el código QR.</p>
+                                        <p style="margin:0 0 8px;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;"
+                                            th:text="#{email.invoice.digitalInvoice}">Tu factura digital</p>
+                                        <p style="margin:0 0 16px;font-size:13px;color:#64748b;line-height:1.5;"
+                                            th:text="#{email.invoice.downloadNote}">
+                                            Descarga o consulta tu factura en cualquier momento.
+                                        </p>
                                         <table role="presentation" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center"
-                                                    style="border-radius:8px;background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);">
+                                                    style="border-radius:8px;background:#ffffff;border:1px solid #cbd5e1;">
                                                     <a th:href="${invoiceUrl}" target="_blank"
-                                                        style="display:inline-block;padding:12px 28px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:0.3px;">
-                                                        &#128196; Descargar factura
+                                                        style="display:inline-block;padding:12px 28px;font-size:14px;font-weight:600;color:#64748b;text-decoration:none;letter-spacing:0.3px;">
+                                                        &#128196; <span
+                                                            th:text="#{email.invoice.downloadButton}">Descargar
+                                                            factura</span>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -264,11 +260,10 @@
                                     </td>
                                     <td align="center"
                                         style="padding:24px;width:170px;vertical-align:middle;border-left:1px solid #e6ebf0;">
-                                        <img th:src="${qrCodeUrl}" alt="QR Factura" width="130" height="130"
+                                        <img th:src="${qrCodeUrl}" alt="QR" width="130" height="130"
                                             style="display:block;border-radius:8px;border:1px solid #e6ebf0;" />
-                                        <p
-                                            style="margin:8px 0 0;font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">
-                                            Escanea para ver</p>
+                                        <p style="margin:8px 0 0;font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;"
+                                            th:text="#{email.invoice.scanLabel}">Escanea para ver</p>
                                     </td>
                                 </tr>
                             </table>
@@ -278,10 +273,11 @@
                     <!-- Footer -->
                     <tr>
                         <td align="center" style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e6ebf0;">
-                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">&copy; 2026 NX036. Todos los
-                                derechos reservados.</p>
-                            <p style="margin:0;font-size:11px;color:#cbd5e1;">Este es un correo automático, por favor no
-                                respondas a este mensaje.</p>
+                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;"
+                                th:text="#{email.common.footer.rights}">&copy; 2026 NX036. Todos los derechos
+                                reservados.</p>
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;" th:text="#{email.common.footer.noreply}">
+                                Este es un correo automático, por favor no respondas a este mensaje.</p>
                         </td>
                     </tr>
 

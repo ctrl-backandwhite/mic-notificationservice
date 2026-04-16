@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null and !#strings.isEmpty(lang)} ? ${lang} : 'es'">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@200;300;400;600;700&display=swap"
+        rel="stylesheet">
+    <title th:text="${title != null and !#strings.isEmpty(title)} ? ${title} : #{email.alert.defaultTitle}">Alerta
+    </title>
+</head>
+
+<body
+    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto Condensed','Roboto','Segoe UI',Arial,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f6f8;">
+        <tr>
+            <td align="center" style="padding:40px 16px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="560"
+                    style="max-width:560px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(15,23,42,0.10);">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center"
+                            style="background:#ffffff;padding:28px 32px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" valign="middle"
+                                        style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1a5276,#2e86c1);box-shadow:0 0 0 2px #ffffff,0 0 0 4px #2e86c1;text-align:center;vertical-align:middle;">
+                                        <span
+                                            style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:1px;">NX</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Alert Banner -->
+                    <tr>
+                        <td align="center"
+                            th:style="'padding:14px 32px;font-size:15px;font-weight:600;color:#ffffff;background:' + (${alertType == 'error'} ? '#e53e3e' : (${alertType == 'success'} ? '#38a169' : (${alertType == 'info'} ? '#3182ce' : '#d69e2e')))"
+                            style="padding:14px 32px;font-size:15px;font-weight:600;color:#ffffff;background:#d69e2e;">
+                            <span
+                                th:text="${alertMessage != null and !#strings.isEmpty(alertMessage)} ? ${alertMessage} : #{email.alert.defaultMessage}">
+                                ⚠ Requiere tu atención.
+                            </span>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="background:#ffffff;padding:32px 40px;">
+                            <!-- Greeting -->
+                            <p th:if="${name != null and !#strings.isEmpty(name)}"
+                                style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.7;">
+                                <span th:text="#{email.common.greeting}">Hola</span> <strong
+                                    th:text="${name}">Usuario</strong>,
+                            </p>
+                            <!-- Body text -->
+                            <p th:if="${body != null and !#strings.isEmpty(body)}"
+                                style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.7;"
+                                th:utext="${body}">
+                                Contenido del mensaje de alerta.
+                            </p>
+
+                            <!-- Details Table -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                th:if="${row1Label != null}"
+                                style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:0 0 24px;">
+                                <tr>
+                                    <td style="padding:20px 24px;">
+                                        <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;"
+                                            th:text="#{email.alert.detailsTitle}">Detalles</p>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr th:if="${row1Label != null}">
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;"
+                                                    th:text="${row1Label}">Label</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;"
+                                                    th:text="${row1Value}">Value</td>
+                                            </tr>
+                                            <tr th:if="${row2Label != null}">
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row2Label}">Label</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row2Value}">Value</td>
+                                            </tr>
+                                            <tr th:if="${row3Label != null}">
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row3Label}">Label</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row3Value}">Value</td>
+                                            </tr>
+                                            <tr th:if="${row4Label != null}">
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row4Label}">Label</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row4Value}">Value</td>
+                                            </tr>
+                                            <tr th:if="${row5Label != null}">
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row5Label}">Label</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row5Value}">Value</td>
+                                            </tr>
+                                            <tr th:if="${row6Label != null}">
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row6Label}">Label</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;"
+                                                    th:text="${row6Value}">Value</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- CTA Button (optional) -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                th:if="${ctaUrl != null and !#strings.isEmpty(ctaUrl)}">
+                                <tr>
+                                    <td align="center" style="padding:8px 0 24px;">
+                                        <a th:href="${ctaUrl}"
+                                            style="display:inline-block;padding:14px 40px;background:#ffffff;color:#64748b;text-decoration:none;border-radius:8px;font-size:15px;font-weight:600;letter-spacing:0.3px;border:1px solid #cbd5e1;"
+                                            th:text="${ctaLabel}">
+                                            Acción
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Footer Note (optional) -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+                                th:if="${footerNote != null and !#strings.isEmpty(footerNote)}">
+                                <tr>
+                                    <td style="border-top:1px solid #e6ebf0;padding-top:20px;">
+                                        <p style="margin:0;font-size:12px;color:#94a3b8;line-height:1.6;"
+                                            th:utext="${footerNote}">
+                                            Nota al pie.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e6ebf0;">
+                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;"
+                                th:text="#{email.common.footer.rights}">&copy; 2026 NX036. Todos los derechos
+                                reservados.</p>
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;" th:text="#{email.common.footer.noreply}">
+                                Este es un correo automático, por favor no respondas a este mensaje.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -1,7 +1,8 @@
-package com.backandwhite.application.service;
+package com.backandwhite.infrastructure.email;
 
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
+import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import jakarta.mail.internet.MimeMessage;
 import java.time.Instant;
@@ -9,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,15 +20,16 @@ import org.thymeleaf.context.Context;
 @Log4j2
 @Service
 @AllArgsConstructor
-public class EmailService {
+public class SmtpNotificationSender implements NotificationSender {
 
-    private static final Locale DEFAULT_EMAIL_LOCALE = Locale.forLanguageTag("es");
+    private static final Locale DEFAULT_EMAIL_LOCALE = Locale.forLanguageTag("en");
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final NotificationRepository notificationRepository;
 
-    public void sendEmail(Notification notification) {
+    @Override
+    public void send(Notification notification) {
         try {
             String htmlContent = buildEmailContent(notification);
             MimeMessage message = mailSender.createMimeMessage();
@@ -51,7 +54,7 @@ public class EmailService {
                     : "Unknown error");
             notification.setRetryCount(notification.getRetryCount() == null ? 1 : notification.getRetryCount() + 1);
             notificationRepository.update(notification);
-            throw new RuntimeException("Error sending email for notification id=" + notification.getId(), e);
+            throw new MailSendException("Error sending email for notification id=" + notification.getId(), e);
         }
     }
 

@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${subject != null and !#strings.isEmpty(subject)} ? ${subject} : #{email.default.title}">Notificación de NX036</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@200;300;400;600;700&display=swap"
+        rel="stylesheet">
+    <title th:text="${subject != null and !#strings.isEmpty(subject)} ? ${subject} : #{email.default.title}">
+        Notificación de NX036</title>
 </head>
 
 <body
-    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto Condensed','Roboto','Segoe UI',Arial,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f6f8;">
         <tr>
             <td align="center" style="padding:40px 16px;">
@@ -17,11 +20,16 @@
                     <!-- Header -->
                     <tr>
                         <td align="center"
-                            style="background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);padding:40px 32px 32px;">
-                            <p style="margin:0 0 12px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;"
-                                th:text="#{email.common.brand}">NX036</p>
-                            <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.7);"
-                                th:text="#{email.common.slogan}">Tu plataforma eCommerce</p>
+                            style="background:#ffffff;padding:28px 32px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" valign="middle"
+                                        style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1a5276,#2e86c1);box-shadow:0 0 0 2px #ffffff,0 0 0 4px #2e86c1;text-align:center;vertical-align:middle;">
+                                        <span
+                                            style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:1px;">NX</span>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                     <!-- Body -->
@@ -39,8 +47,8 @@
                             <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;"
                                 th:text="#{email.common.footer.rights}">&copy; 2026 NX036. Todos los derechos
                                 reservados.</p>
-                            <p style="margin:0;font-size:11px;color:#cbd5e1;"
-                                th:text="#{email.common.footer.noreply}">Este es un correo automático, por favor no
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;" th:text="#{email.common.footer.noreply}">
+                                Este es un correo automático, por favor no
                                 respondas a este mensaje.</p>
                         </td>
                     </tr>

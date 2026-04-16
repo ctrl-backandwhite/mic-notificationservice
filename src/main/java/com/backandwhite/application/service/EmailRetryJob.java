@@ -2,6 +2,7 @@ package com.backandwhite.application.service;
 
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
+import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class EmailRetryJob {
     private static final int DEFAULT_MAX_RETRIES = 3;
 
     private final NotificationRepository notificationRepository;
-    private final EmailService emailService;
+    private final NotificationSender notificationSender;
 
     @Value("${app.email.retry.max-retries:3}")
     private int maxRetries = DEFAULT_MAX_RETRIES;
@@ -44,7 +45,7 @@ public class EmailRetryJob {
                 notification.setErrorMessage(null);
                 notificationRepository.update(notification);
 
-                emailService.sendEmail(notification);
+                notificationSender.send(notification);
                 log.info("::> Email retry successful for notification id={}", notification.getId());
             } catch (Exception e) {
                 log.warn("::> Email retry failed for notification id={} (attempt {}/{}): {}", notification.getId(),

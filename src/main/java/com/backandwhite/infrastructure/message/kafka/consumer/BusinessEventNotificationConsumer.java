@@ -1,7 +1,6 @@
 package com.backandwhite.infrastructure.message.kafka.consumer;
 
 import com.backandwhite.application.handler.NotificationCommandHandler;
-import com.backandwhite.application.service.EmailService;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.*;
@@ -9,6 +8,7 @@ import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
+import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +33,13 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(name = "spring.kafka.listener.auto-startup", havingValue = "true", matchIfMissing = true)
 public class BusinessEventNotificationConsumer {
 
-    private final EmailService emailService;
+    private static final String KEY_ORDER_ID = "orderId";
+    private static final String KEY_ORDER_REFERENCE = "orderReference";
+    private static final String KEY_TOTAL_AMOUNT = "totalAmount";
+    private static final String KEY_CURRENCY = "currency";
+    private static final String KEY_AMOUNT = "amount";
+
+    private final NotificationSender notificationSender;
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateUseCase notificationTemplateUseCase;
     private final NotificationCommandHandler notificationCommandHandler;
@@ -56,10 +62,10 @@ public class BusinessEventNotificationConsumer {
         log.info("::> Notification: order.created orderId={}", str(event.getOrderId()));
 
         Map<String, Object> vars = new HashMap<>();
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("orderReference", str(event.getOrderReference()));
-        vars.put("totalAmount", str(event.getTotalAmount()));
-        vars.put("currency", str(event.getCurrency()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_ORDER_REFERENCE, str(event.getOrderReference()));
+        vars.put(KEY_TOTAL_AMOUNT, str(event.getTotalAmount()));
+        vars.put(KEY_CURRENCY, str(event.getCurrency()));
         vars.put("itemCount", String.valueOf(event.getItemCount()));
         vars.put("status", str(event.getStatus()));
 
@@ -74,10 +80,10 @@ public class BusinessEventNotificationConsumer {
         log.info("::> Notification: order.confirmed orderId={}", str(event.getOrderId()));
 
         Map<String, Object> vars = new HashMap<>();
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("orderReference", str(event.getOrderReference()));
-        vars.put("totalAmount", str(event.getTotalAmount()));
-        vars.put("currency", str(event.getCurrency()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_ORDER_REFERENCE, str(event.getOrderReference()));
+        vars.put(KEY_TOTAL_AMOUNT, str(event.getTotalAmount()));
+        vars.put(KEY_CURRENCY, str(event.getCurrency()));
 
         sendNotification(email, "Order Confirmed", "order-confirmed", vars);
     }
@@ -90,8 +96,8 @@ public class BusinessEventNotificationConsumer {
         log.info("::> Notification: order.cancelled orderId={}", str(event.getOrderId()));
 
         Map<String, Object> vars = new HashMap<>();
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("orderReference", str(event.getOrderReference()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_ORDER_REFERENCE, str(event.getOrderReference()));
         vars.put("reason", str(event.getReason()));
 
         sendNotification(email, "Order Cancelled", "order-cancelled", vars);
@@ -105,8 +111,8 @@ public class BusinessEventNotificationConsumer {
         log.info("::> Notification: order.shipped orderId={}", str(event.getOrderId()));
 
         Map<String, Object> vars = new HashMap<>();
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("orderReference", str(event.getOrderReference()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_ORDER_REFERENCE, str(event.getOrderReference()));
         vars.put("trackingNumber", str(event.getTrackingNumber()));
         vars.put("carrier", str(event.getCarrier()));
         vars.put("estimatedDelivery", str(event.getEstimatedDelivery()));
@@ -122,9 +128,9 @@ public class BusinessEventNotificationConsumer {
         log.info("::> Notification: order.delivered orderId={}", str(event.getOrderId()));
 
         Map<String, Object> vars = new HashMap<>();
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("orderReference", str(event.getOrderReference()));
-        vars.put("totalAmount", str(event.getTotalAmount()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_ORDER_REFERENCE, str(event.getOrderReference()));
+        vars.put(KEY_TOTAL_AMOUNT, str(event.getTotalAmount()));
 
         sendNotification(email, "Your Order Has Been Delivered", "order-delivered", vars);
     }
@@ -140,9 +146,9 @@ public class BusinessEventNotificationConsumer {
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("paymentId", str(event.getPaymentId()));
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("amount", str(event.getAmount()));
-        vars.put("currency", str(event.getCurrency()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_AMOUNT, str(event.getAmount()));
+        vars.put(KEY_CURRENCY, str(event.getCurrency()));
         vars.put("method", str(event.getMethod()));
 
         sendNotification(email, "Payment Confirmed", "payment-confirmed", vars);
@@ -157,8 +163,8 @@ public class BusinessEventNotificationConsumer {
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("paymentId", str(event.getPaymentId()));
-        vars.put("orderId", str(event.getOrderId()));
-        vars.put("amount", str(event.getAmount()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
+        vars.put(KEY_AMOUNT, str(event.getAmount()));
         vars.put("reason", str(event.getReason()));
 
         sendNotification(email, "Payment Failed", "payment-failed", vars);
@@ -173,7 +179,7 @@ public class BusinessEventNotificationConsumer {
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("refundId", str(event.getRefundId()));
-        vars.put("orderId", str(event.getOrderId()));
+        vars.put(KEY_ORDER_ID, str(event.getOrderId()));
         vars.put("refundAmount", str(event.getRefundAmount()));
 
         sendNotification(email, "Refund Processed", "refund-completed", vars);
@@ -229,7 +235,7 @@ public class BusinessEventNotificationConsumer {
         if (rawExpiry != null && !rawExpiry.isBlank()) {
             try {
                 formattedExpiry = LocalDate.parse(rawExpiry).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
+            } catch (Exception _) {
                 log.warn("::> Could not parse expiryDate '{}', using raw value", rawExpiry);
             }
         }
@@ -240,8 +246,8 @@ public class BusinessEventNotificationConsumer {
         vars.put("recipientName", str(event.getRecipientName()));
         vars.put("buyerName", str(event.getBuyerName()));
         vars.put("code", str(event.getCode()));
-        vars.put("amount", str(event.getAmount()));
-        vars.put("currency", str(event.getCurrency()) != null ? str(event.getCurrency()) : "USD");
+        vars.put(KEY_AMOUNT, str(event.getAmount()));
+        vars.put(KEY_CURRENCY, str(event.getCurrency()) != null ? str(event.getCurrency()) : "USD");
         vars.put("message", str(event.getMessage()));
         vars.put("expiryDate", formattedExpiry);
         vars.put("cardGradient", cardGradient);
@@ -263,7 +269,10 @@ public class BusinessEventNotificationConsumer {
 
             Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
             if (templateOpt.isEmpty()) {
-                log.warn("::> Template '{}' not found. Using default template.", templateName);
+                log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName,
+                        templateName);
+                notification.setTemplate(NotificationTemplate.builder().name(templateName)
+                        .templateFile("email/" + templateName).active(true).build());
             } else {
                 NotificationTemplate template = templateOpt.get();
                 if (Boolean.FALSE.equals(template.getActive())) {
@@ -277,7 +286,7 @@ public class BusinessEventNotificationConsumer {
             }
 
             Notification saved = notificationRepository.save(notification);
-            emailService.sendEmail(saved);
+            notificationSender.send(saved);
             log.info("::> Notification sent: id={}, template={}", saved.getId(), templateName);
         } catch (Exception e) {
             log.error("::> Failed to send notification: template={}, error={}", templateName, e.getMessage(), e);

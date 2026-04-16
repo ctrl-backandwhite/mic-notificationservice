@@ -7,11 +7,11 @@ import static org.mockito.Mockito.*;
 import com.backandwhite.api.dto.in.NotificationDtoIn;
 import com.backandwhite.api.dto.out.NotificationDtoOut;
 import com.backandwhite.api.mapper.NotificationDtoMapper;
-import com.backandwhite.application.service.EmailService;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.application.usecase.NotificationUseCase;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
+import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.provider.NotificationProvider;
 import com.backandwhite.provider.NotificationTemplateProvider;
 import java.util.List;
@@ -33,7 +33,7 @@ class NotificationControllerTest {
     @Mock
     private NotificationTemplateUseCase templateUseCase;
     @Mock
-    private EmailService emailService;
+    private NotificationSender notificationSender;
 
     @InjectMocks
     private NotificationController controller;
@@ -54,7 +54,7 @@ class NotificationControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isEqualTo(dtoOut);
-        verify(emailService).sendEmail(saved);
+        verify(notificationSender).send(saved);
     }
 
     @Test

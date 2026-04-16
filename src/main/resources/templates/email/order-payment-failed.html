@@ -1,47 +1,52 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null and !#strings.isEmpty(lang)} ? ${lang} : 'es'">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${subject != null} ? ${subject} : 'Tu pedido no pudo ser procesado'">Tu pedido no pudo ser procesado
-    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@200;300;400;600;700&display=swap"
+        rel="stylesheet">
+    <title th:text="${subject != null} ? ${subject} : #{email.paymentfailed.alertBanner}">Tu pedido no pudo ser
+        procesado</title>
 </head>
 
 <body
-    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+    style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Roboto Condensed','Roboto','Segoe UI',Arial,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f6f8;">
         <tr>
             <td align="center" style="padding:40px 16px;">
                 <table role="presentation" cellpadding="0" cellspacing="0" width="560"
                     style="max-width:560px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(15,23,42,0.10);">
-
                     <!-- Header -->
                     <tr>
                         <td align="center"
-                            style="background:linear-gradient(135deg,#1f9e9c 0%,#2c3e88 70%);padding:40px 32px 32px;">
-                            <p style="margin:0 0 12px;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;">
-                                NX036</p>
-                            <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.7);">Tu plataforma eCommerce</p>
+                            style="background:#ffffff;padding:28px 32px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" valign="middle"
+                                        style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1a5276,#2e86c1);box-shadow:0 0 0 2px #ffffff,0 0 0 4px #2e86c1;text-align:center;vertical-align:middle;">
+                                        <span
+                                            style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:1px;">NX</span>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
-
                     <!-- Alert Banner -->
                     <tr>
                         <td style="background:#fef2f2;padding:16px 40px;border-bottom:1px solid #fca5a5;">
-                            <p style="margin:0;font-size:14px;font-weight:600;color:#b91c1c;text-align:center;">
-                                &#9888; No se pudo procesar el pago de tu pedido
+                            <p style="margin:0;font-size:14px;font-weight:600;color:#b91c1c;text-align:center;"
+                                th:text="#{email.paymentfailed.alertBanner}">
+                                ⚠ No se pudo procesar el pago de tu pedido
                             </p>
                         </td>
                     </tr>
-
                     <!-- Body -->
                     <tr>
                         <td style="background:#ffffff;padding:36px 40px 32px;">
-
-                            <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;">
+                            <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;"
+                                th:utext="#{email.paymentfailed.body}">
                                 Lamentamos informarte que no fue posible completar el pago de tu pedido.
-                                Si tienes alguna duda, no dudes en contactar con nuestro equipo de soporte.
                             </p>
 
                             <!-- Order details box -->
@@ -49,31 +54,28 @@
                                 style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:24px;">
                                 <tr>
                                     <td style="padding:20px 24px;">
-                                        <p
-                                            style="margin:0 0 12px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">
+                                        <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;"
+                                            th:text="#{email.paymentfailed.detailsTitle}">
                                             Detalles del pedido
                                         </p>
-
                                         <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
-                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;">
-                                                    Referencia</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;"
+                                                    th:text="#{email.paymentfailed.reference}">Referencia</td>
                                                 <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;"
                                                     th:text="${orderReference != null} ? ${orderReference} : ${orderId}">
                                                     #ORDER</td>
                                             </tr>
                                             <tr>
-                                                <td
-                                                    style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;">
-                                                    Importe</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="#{email.paymentfailed.amount}">Importe</td>
                                                 <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;"
                                                     th:text="${amount != null} ? (${currency != null} ? ${amount} + ' ' + ${currency} : ${amount}) : '—'">
                                                     0.00 USD</td>
                                             </tr>
                                             <tr th:if="${reason != null and !#strings.isEmpty(reason)}">
-                                                <td
-                                                    style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;">
-                                                    Motivo</td>
+                                                <td style="padding:6px 0;font-size:13px;color:#64748b;width:50%;border-top:1px solid #e2e8f0;"
+                                                    th:text="#{email.paymentfailed.reason}">Motivo</td>
                                                 <td style="padding:6px 0;font-size:13px;color:#b91c1c;text-align:right;border-top:1px solid #e2e8f0;"
                                                     th:text="${reason}">Motivo del fallo</td>
                                             </tr>
@@ -82,24 +84,22 @@
                                 </tr>
                             </table>
 
-                            <p style="margin:0 0 8px;font-size:14px;color:#334155;line-height:1.7;">
-                                Puedes intentar nuevamente con otro método de pago desde tu cuenta,
-                                o ponerte en contacto con nuestro equipo de soporte.
+                            <p style="margin:0 0 8px;font-size:14px;color:#334155;line-height:1.7;"
+                                th:utext="#{email.paymentfailed.retry}">
+                                Puedes intentar nuevamente con otro método de pago.
                             </p>
-
                         </td>
                     </tr>
-
                     <!-- Footer -->
                     <tr>
                         <td align="center" style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e6ebf0;">
-                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">&copy; 2026 NX036. Todos los
-                                derechos reservados.</p>
-                            <p style="margin:0;font-size:11px;color:#cbd5e1;">Este es un correo automático, por favor no
-                                respondas a este mensaje.</p>
+                            <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;"
+                                th:text="#{email.common.footer.rights}">&copy; 2026 NX036. Todos los derechos
+                                reservados.</p>
+                            <p style="margin:0;font-size:11px;color:#cbd5e1;" th:text="#{email.common.footer.noreply}">
+                                Este es un correo automático, por favor no respondas a este mensaje.</p>
                         </td>
                     </tr>
-
                 </table>
             </td>
         </tr>

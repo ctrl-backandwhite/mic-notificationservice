@@ -85,7 +85,7 @@ public class TestContainersConfiguration {
 
     @Bean
     @Order(1)
-    SecurityFilterChain testResourceServerFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
+    SecurityFilterChain testResourceServerFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) {
         JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
         authorities.setAuthoritiesClaimName("roles");
         authorities.setAuthorityPrefix("ROLE_");

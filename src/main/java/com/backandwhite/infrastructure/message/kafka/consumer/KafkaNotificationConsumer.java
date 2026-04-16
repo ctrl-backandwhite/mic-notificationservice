@@ -1,7 +1,6 @@
 package com.backandwhite.infrastructure.message.kafka.consumer;
 
 import com.backandwhite.application.handler.NotificationCommandHandler;
-import com.backandwhite.application.service.EmailService;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.EmailNotificationEvent;
@@ -9,6 +8,7 @@ import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
+import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class KafkaNotificationConsumer {
 
-    private final EmailService emailService;
+    private final NotificationSender notificationSender;
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateUseCase notificationTemplateUseCase;
     private final NotificationCommandHandler notificationCommandHandler;
@@ -59,28 +59,35 @@ public class KafkaNotificationConsumer {
         // Validar notificación antes de persistir
         notificationCommandHandler.validate(notification);
 
-        // Resolver template, verificar active y loguear warning si no se encuentra
-        String templateName = event.getTemplateName() != null ? event.getTemplateName().toString() : null;
-        if (templateName != null) {
-            Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
-            if (templateOpt.isEmpty()) {
-                log.warn("::> Notification template '{}' not found in database. Using default template.", templateName);
-            } else {
-                NotificationTemplate template = templateOpt.get();
-                if (Boolean.FALSE.equals(template.getActive())) {
-                    log.warn("::> Notification template '{}' is inactive. Using default template.", templateName);
-                } else {
-                    notification.setTemplate(template);
-                    if (notification.getSubject() == null || notification.getSubject().isBlank()) {
-                        notification.setSubject(template.getSubject());
-                    }
-                }
-            }
-        }
+        // Resolver template
+        String templateName = event.getTemplateName() != null ? event.getTemplateName() : null;
+        resolveTemplate(notification, templateName);
 
         Notification saved = notificationRepository.save(notification);
         log.debug("::> Notification persisted with id: {}", saved.getId());
 
-        emailService.sendEmail(saved);
+        notificationSender.send(saved);
+    }
+
+    private void resolveTemplate(Notification notification, String templateName) {
+        if (templateName == null) {
+            return;
+        }
+        Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
+        if (templateOpt.isEmpty()) {
+            log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName, templateName);
+            notification.setTemplate(NotificationTemplate.builder().name(templateName)
+                    .templateFile("email/" + templateName).active(true).build());
+            return;
+        }
+        NotificationTemplate template = templateOpt.get();
+        if (Boolean.FALSE.equals(template.getActive())) {
+            log.warn("::> Notification template '{}' is inactive. Using default template.", templateName);
+            return;
+        }
+        notification.setTemplate(template);
+        if (notification.getSubject() == null || notification.getSubject().isBlank()) {
+            notification.setSubject(template.getSubject());
+        }
     }
 }

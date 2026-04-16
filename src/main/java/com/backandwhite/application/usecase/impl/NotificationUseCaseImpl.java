@@ -54,7 +54,7 @@ public class NotificationUseCaseImpl implements NotificationUseCase {
     @Transactional
     public Notification update(Notification model, Long id) {
         log.debug("::> Updating notification {}", id);
-        Notification existing = this.getById(id);
+        Notification existing = findExistingById(id);
         notificationUpdateMapper.updateFromModel(model, existing);
         notificationCommandHandler.validate(existing);
         return notificationRepository.update(existing);
@@ -63,7 +63,7 @@ public class NotificationUseCaseImpl implements NotificationUseCase {
     @Override
     @Transactional
     public void delete(Long id) {
-        this.getById(id);
+        findExistingById(id);
         log.debug("::> Deleting notification with id {}", id);
         notificationRepository.delete(id);
     }
@@ -80,5 +80,13 @@ public class NotificationUseCaseImpl implements NotificationUseCase {
     public List<Notification> findByRecipient(String recipient) {
         log.debug("::> Getting notifications by recipient");
         return notificationRepository.findByRecipient(recipient);
+    }
+
+    private Notification findExistingById(Long id) {
+        Notification model = notificationRepository.getById(id);
+        if (Objects.isNull(model)) {
+            throw ENTITY_NOT_FOUND.toEntityNotFound("Notification", id);
+        }
+        return model;
     }
 }

@@ -1,6 +1,5 @@
 package com.backandwhite.infrastructure.message.kafka.consumer;
 
-import com.backandwhite.application.service.EmailService;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.SagaNotifyFailureEvent;
@@ -8,6 +7,7 @@ import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
+import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class SagaNotificationListener {
 
     private static final String TEMPLATE_NAME = "order-payment-failed";
 
-    private final EmailService emailService;
+    private final NotificationSender notificationSender;
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateUseCase notificationTemplateUseCase;
 
@@ -71,7 +71,7 @@ public class SagaNotificationListener {
 
         try {
             Notification saved = notificationRepository.save(notification);
-            emailService.sendEmail(saved);
+            notificationSender.send(saved);
             log.info("::> [Saga] Failure notification sent for orderId={}", orderId);
         } catch (Exception e) {
             log.error("::> [Saga] Failed to send failure notification for orderId={}: {}", orderId, e.getMessage(), e);

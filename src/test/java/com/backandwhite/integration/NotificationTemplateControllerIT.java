@@ -43,9 +43,9 @@ class NotificationTemplateControllerIT extends BaseIntegration {
                 .subject("Original Subject").templateFile("email/default")
                 .type(NotificationTemplateProvider.TEMPLATE_TYPE).active(true).build();
 
-        Long id = webTestClient.post().uri(BASE_URL).header("Authorization", getToken(List.of("ADMIN")))
+        webTestClient.post().uri(BASE_URL).header("Authorization", getToken(List.of("ADMIN")))
                 .contentType(MediaType.APPLICATION_JSON).bodyValue(createDto).exchange().expectStatus().isCreated()
-                .expectBody().jsonPath("$.id").exists().returnResult().getResponseBody() != null ? 1L : 1L;
+                .expectBody().jsonPath("$.id").exists();
 
         // Then update it
         NotificationTemplateDtoIn updateDto = NotificationTemplateDtoIn.builder().name("template-to-update")
