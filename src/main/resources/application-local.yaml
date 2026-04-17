@@ -30,12 +30,10 @@ spring:
           starttls:
             enable: true
   kafka:
-    bootstrap-servers: ${NFT_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     listener:
       auto-startup: false
     enabled: true
-    consumer:
-      auto-offset-reset: earliest
 
   security:
     oauth2:

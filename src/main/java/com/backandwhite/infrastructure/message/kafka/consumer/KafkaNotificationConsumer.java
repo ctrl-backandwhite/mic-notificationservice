@@ -59,35 +59,46 @@ public class KafkaNotificationConsumer {
         // Validate notification before persisting
         notificationCommandHandler.validate(notification);
 
-        // Resolve template
+        // Resolve template — file-based templates are NOT set on notification
+        // before save to avoid TransientPropertyValueException
         String templateName = event.getTemplateName() != null ? event.getTemplateName() : null;
-        resolveTemplate(notification, templateName);
+        NotificationTemplate fileTemplate = resolveTemplate(notification, templateName);
 
         Notification saved = notificationRepository.save(notification);
         log.debug("::> Notification persisted with id: {}", saved.getId());
 
+        // Restore file-based template after persist (needed for email rendering)
+        if (fileTemplate != null) {
+            saved.setTemplate(fileTemplate);
+        }
+
         notificationSender.send(saved);
     }
 
-    private void resolveTemplate(Notification notification, String templateName) {
+    /**
+     * Resolves the notification template. If found in DB, sets it directly on the
+     * notification (managed entity). If not found, returns a transient file-based
+     * template that must be set AFTER persisting the notification.
+     */
+    private NotificationTemplate resolveTemplate(Notification notification, String templateName) {
         if (templateName == null) {
-            return;
+            return null;
         }
         Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
         if (templateOpt.isEmpty()) {
             log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName, templateName);
-            notification.setTemplate(NotificationTemplate.builder().name(templateName)
-                    .templateFile("email/" + templateName).active(true).build());
-            return;
+            return NotificationTemplate.builder().name(templateName).templateFile("email/" + templateName).active(true)
+                    .build();
         }
         NotificationTemplate template = templateOpt.get();
         if (Boolean.FALSE.equals(template.getActive())) {
             log.warn("::> Notification template '{}' is inactive. Using default template.", templateName);
-            return;
+            return null;
         }
         notification.setTemplate(template);
         if (notification.getSubject() == null || notification.getSubject().isBlank()) {
             notification.setSubject(template.getSubject());
         }
+        return null;
     }
 }

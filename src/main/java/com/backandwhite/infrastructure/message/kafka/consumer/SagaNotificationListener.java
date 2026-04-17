@@ -52,18 +52,20 @@ public class SagaNotificationListener {
                 .type(NotificationType.EMAIL).status(NotificationStatus.PENDING).variables(variables).retryCount(0)
                 .build();
 
-        // Attempt to resolve template from DB; fall back to file template
+        // Resolve template — file-based templates are NOT set on notification
+        // before save to avoid TransientPropertyValueException
+        NotificationTemplate fileTemplate = null;
         Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(TEMPLATE_NAME);
         if (templateOpt.isEmpty()) {
             log.warn("::> [Saga] Template '{}' not found in DB. Falling back to file template.", TEMPLATE_NAME);
-            notification.setTemplate(NotificationTemplate.builder().name(TEMPLATE_NAME)
-                    .templateFile("email/" + TEMPLATE_NAME).active(true).build());
+            fileTemplate = NotificationTemplate.builder().name(TEMPLATE_NAME).templateFile("email/" + TEMPLATE_NAME)
+                    .active(true).build();
         } else {
             NotificationTemplate template = templateOpt.get();
             if (Boolean.FALSE.equals(template.getActive())) {
                 log.warn("::> [Saga] Template '{}' is inactive. Falling back to file template.", TEMPLATE_NAME);
-                notification.setTemplate(NotificationTemplate.builder().name(TEMPLATE_NAME)
-                        .templateFile("email/" + TEMPLATE_NAME).active(true).build());
+                fileTemplate = NotificationTemplate.builder().name(TEMPLATE_NAME).templateFile("email/" + TEMPLATE_NAME)
+                        .active(true).build();
             } else {
                 notification.setTemplate(template);
             }
@@ -71,6 +73,12 @@ public class SagaNotificationListener {
 
         try {
             Notification saved = notificationRepository.save(notification);
+
+            // Restore file-based template after persist (needed for email rendering)
+            if (fileTemplate != null) {
+                saved.setTemplate(fileTemplate);
+            }
+
             notificationSender.send(saved);
             log.info("::> [Saga] Failure notification sent for orderId={}", orderId);
         } catch (Exception e) {

@@ -36,15 +36,6 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka.railway.internal:9092}
     enabled: true
-    properties:
-      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://schema-registry-sbs4.railway.internal:8081}
-      basic.auth.credentials.source: USER_INFO
-      basic.auth.user.info: ${SCHEMA_REGISTRY_AUTH}
-    consumer:
-      group-id: ${spring.application.name}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      auto-offset-reset: earliest
 
   security:
     oauth2:

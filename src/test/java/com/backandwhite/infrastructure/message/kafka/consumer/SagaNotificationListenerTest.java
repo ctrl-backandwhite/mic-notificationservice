@@ -59,13 +59,20 @@ class SagaNotificationListenerTest {
     @Test
     void onNotifyFailure_templateNotFound_usesFallback() {
         when(notificationTemplateUseCase.findByName("order-payment-failed")).thenReturn(Optional.empty());
-        when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(inv -> {
+            Notification n = inv.getArgument(0);
+            // At save time, file-based template must NOT be set (avoids
+            // TransientPropertyValueException)
+            assertThat(n.getTemplate()).isNull();
+            return n;
+        });
 
         listener.onNotifyFailure(buildEvent());
 
-        ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-        verify(notificationRepository).save(captor.capture());
-        NotificationTemplate fallback = captor.getValue().getTemplate();
+        // After the flow, the file-based template is set for email rendering
+        ArgumentCaptor<Notification> sendCaptor = ArgumentCaptor.forClass(Notification.class);
+        verify(notificationSender).send(sendCaptor.capture());
+        NotificationTemplate fallback = sendCaptor.getValue().getTemplate();
         assertThat(fallback.getName()).isEqualTo("order-payment-failed");
         assertThat(fallback.getTemplateFile()).isEqualTo("email/order-payment-failed");
         assertThat(fallback.getActive()).isTrue();
@@ -76,13 +83,20 @@ class SagaNotificationListenerTest {
         NotificationTemplate template = NotificationTemplate.builder().name("order-payment-failed")
                 .templateFile("email/order-payment-failed").active(false).build();
         when(notificationTemplateUseCase.findByName("order-payment-failed")).thenReturn(Optional.of(template));
-        when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(inv -> {
+            Notification n = inv.getArgument(0);
+            // At save time, file-based template must NOT be set (avoids
+            // TransientPropertyValueException)
+            assertThat(n.getTemplate()).isNull();
+            return n;
+        });
 
         listener.onNotifyFailure(buildEvent());
 
-        ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
-        verify(notificationRepository).save(captor.capture());
-        NotificationTemplate fallback = captor.getValue().getTemplate();
+        // After the flow, the file-based template is set for email rendering
+        ArgumentCaptor<Notification> sendCaptor = ArgumentCaptor.forClass(Notification.class);
+        verify(notificationSender).send(sendCaptor.capture());
+        NotificationTemplate fallback = sendCaptor.getValue().getTemplate();
         assertThat(fallback.getTemplateFile()).isEqualTo("email/order-payment-failed");
         assertThat(fallback.getActive()).isTrue();
     }
