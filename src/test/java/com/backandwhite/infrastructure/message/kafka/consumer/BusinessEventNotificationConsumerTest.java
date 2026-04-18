@@ -11,6 +11,8 @@ import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapper;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapperImpl;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -40,6 +43,9 @@ class BusinessEventNotificationConsumerTest {
 
     @Mock
     private NotificationCommandHandler notificationCommandHandler;
+
+    @Spy
+    private NotificationEventMapper notificationEventMapper = new NotificationEventMapperImpl();
 
     @InjectMocks
     private BusinessEventNotificationConsumer consumer;

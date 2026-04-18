@@ -13,6 +13,8 @@ import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapper;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapperImpl;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +39,9 @@ class KafkaNotificationConsumerTest {
 
     @Mock
     private NotificationCommandHandler notificationCommandHandler;
+
+    @Spy
+    private NotificationEventMapper notificationEventMapper = new NotificationEventMapperImpl();
 
     @InjectMocks
     private KafkaNotificationConsumer consumer;

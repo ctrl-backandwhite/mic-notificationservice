@@ -5,13 +5,10 @@ import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.EmailNotificationEvent;
 import com.backandwhite.domain.model.Notification;
-import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
-import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
-import java.util.HashMap;
-import java.util.Map;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapper;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +24,7 @@ public class KafkaNotificationConsumer {
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateUseCase notificationTemplateUseCase;
     private final NotificationCommandHandler notificationCommandHandler;
+    private final NotificationEventMapper notificationEventMapper;
 
     @KafkaListener(topics = AppConstants.KAFKA_TOPIC_NOTIFICATION_EMAIL, groupId = AppConstants.KAFKA_GROUP_NOTIFICATIONS, containerFactory = "avroKafkaListenerContainerFactory")
     public void consume(EmailNotificationEvent event) {
@@ -45,16 +43,7 @@ public class KafkaNotificationConsumer {
      * validates, resolves the template, and sends the email.
      */
     private void processEvent(EmailNotificationEvent event) {
-        // Convert Map<String, String> (Avro) to Map<String, Object> (domain)
-        Map<String, Object> variables = new HashMap<>();
-        if (event.getVariables() != null) {
-            variables.putAll(event.getVariables());
-        }
-
-        Notification notification = Notification.builder()
-                .recipient(event.getRecipient() != null ? event.getRecipient() : null)
-                .subject(event.getSubject() != null ? event.getSubject() : null).type(NotificationType.EMAIL)
-                .status(NotificationStatus.PENDING).variables(variables).retryCount(0).build();
+        Notification notification = notificationEventMapper.toNotification(event);
 
         // Validate notification before persisting
         notificationCommandHandler.validate(notification);
@@ -87,8 +76,7 @@ public class KafkaNotificationConsumer {
         Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
         if (templateOpt.isEmpty()) {
             log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName, templateName);
-            return NotificationTemplate.builder().name(templateName).templateFile("email/" + templateName).active(true)
-                    .build();
+            return notificationEventMapper.toFileTemplate(templateName);
         }
         NotificationTemplate template = templateOpt.get();
         if (Boolean.FALSE.equals(template.getActive())) {

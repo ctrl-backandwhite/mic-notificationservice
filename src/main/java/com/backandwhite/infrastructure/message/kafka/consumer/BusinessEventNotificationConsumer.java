@@ -5,11 +5,10 @@ import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.*;
 import com.backandwhite.domain.model.Notification;
-import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
-import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapper;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ public class BusinessEventNotificationConsumer {
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateUseCase notificationTemplateUseCase;
     private final NotificationCommandHandler notificationCommandHandler;
+    private final NotificationEventMapper notificationEventMapper;
 
     @Value("${app.store.url:http://localhost:9000}")
     private String storeUrl;
@@ -261,9 +261,7 @@ public class BusinessEventNotificationConsumer {
     private void sendNotification(String recipient, String subject, String templateName,
             Map<String, Object> variables) {
         try {
-            Notification notification = Notification.builder().recipient(recipient).subject(subject)
-                    .type(NotificationType.EMAIL).status(NotificationStatus.PENDING).variables(variables).retryCount(0)
-                    .build();
+            Notification notification = notificationEventMapper.toNotification(recipient, subject, variables);
 
             notificationCommandHandler.validate(notification);
 
@@ -274,8 +272,7 @@ public class BusinessEventNotificationConsumer {
             if (templateOpt.isEmpty()) {
                 log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName,
                         templateName);
-                fileTemplate = NotificationTemplate.builder().name(templateName).templateFile("email/" + templateName)
-                        .active(true).build();
+                fileTemplate = notificationEventMapper.toFileTemplate(templateName);
             } else {
                 NotificationTemplate template = templateOpt.get();
                 if (Boolean.FALSE.equals(template.getActive())) {

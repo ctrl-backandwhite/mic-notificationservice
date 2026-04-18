@@ -4,13 +4,10 @@ import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.SagaNotifyFailureEvent;
 import com.backandwhite.domain.model.Notification;
-import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.model.NotificationTemplate;
-import com.backandwhite.domain.model.NotificationType;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
-import java.util.HashMap;
-import java.util.Map;
+import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMapper;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,24 +30,14 @@ public class SagaNotificationListener {
     private final NotificationSender notificationSender;
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateUseCase notificationTemplateUseCase;
+    private final NotificationEventMapper notificationEventMapper;
 
     @KafkaListener(topics = AppConstants.KAFKA_TOPIC_SAGA_ORDER_NOTIFY_FAILURE, groupId = AppConstants.KAFKA_GROUP_SAGA_NOTIFICATION, containerFactory = "avroKafkaListenerContainerFactory")
     public void onNotifyFailure(SagaNotifyFailureEvent event) {
         String orderId = str(event.getOrderId());
-        String recipient = str(event.getEmail());
         log.info("::> [Saga] Received notify-failure: orderId={}", orderId);
 
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("orderId", orderId);
-        variables.put("orderReference", str(event.getOrderReference()));
-        variables.put("amount", str(event.getAmount()));
-        variables.put("currency", str(event.getCurrency()));
-        variables.put("reason", str(event.getReason()));
-
-        Notification notification = Notification.builder().recipient(recipient)
-                .subject("Your order could not be processed — " + str(event.getOrderReference()))
-                .type(NotificationType.EMAIL).status(NotificationStatus.PENDING).variables(variables).retryCount(0)
-                .build();
+        Notification notification = notificationEventMapper.toNotification(event);
 
         // Resolve template — file-based templates are NOT set on notification
         // before save to avoid TransientPropertyValueException
@@ -58,14 +45,12 @@ public class SagaNotificationListener {
         Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(TEMPLATE_NAME);
         if (templateOpt.isEmpty()) {
             log.warn("::> [Saga] Template '{}' not found in DB. Falling back to file template.", TEMPLATE_NAME);
-            fileTemplate = NotificationTemplate.builder().name(TEMPLATE_NAME).templateFile("email/" + TEMPLATE_NAME)
-                    .active(true).build();
+            fileTemplate = notificationEventMapper.toFileTemplate(TEMPLATE_NAME);
         } else {
             NotificationTemplate template = templateOpt.get();
             if (Boolean.FALSE.equals(template.getActive())) {
                 log.warn("::> [Saga] Template '{}' is inactive. Falling back to file template.", TEMPLATE_NAME);
-                fileTemplate = NotificationTemplate.builder().name(TEMPLATE_NAME).templateFile("email/" + TEMPLATE_NAME)
-                        .active(true).build();
+                fileTemplate = notificationEventMapper.toFileTemplate(TEMPLATE_NAME);
             } else {
                 notification.setTemplate(template);
             }
