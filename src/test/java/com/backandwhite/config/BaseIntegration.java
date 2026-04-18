@@ -1,5 +1,6 @@
 package com.backandwhite.config;
 
+import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.test.JwtTestUtil;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseIntegration {
 
+    protected static final String NX_HEADER = AppConstants.HEADER_NX036_AUTH;
+    protected static final String NX_VALUE = "test";
+
     public static final String PREFIX = "hibernate_";
     private static final Pattern VALID_TABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_]*$");
     private static final Set<String> EXCLUDED_TABLE_PREFIXES = Set.of(PREFIX, "flyway_", "liquibase_");
@@ -54,7 +58,8 @@ public abstract class BaseIntegration {
     @BeforeEach
     public void cleanAllTables() {
         if (webTestClient == null) {
-            webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
+            webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:" + port)
+                    .defaultHeader(NX_HEADER, NX_VALUE).build();
         }
         log.debug("Starting cleanup of all tables...");
 
