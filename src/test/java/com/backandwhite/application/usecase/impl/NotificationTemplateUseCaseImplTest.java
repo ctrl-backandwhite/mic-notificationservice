@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.backandwhite.application.mapper.NotificationTemplateUpdateMapper;
 import com.backandwhite.common.exception.EntityNotFoundException;
 import com.backandwhite.domain.model.NotificationTemplate;
 import com.backandwhite.domain.repository.NotificationTemplateRepository;
@@ -26,6 +27,9 @@ class NotificationTemplateUseCaseImplTest {
 
     @Mock
     private NotificationTemplateRepository notificationTemplateRepository;
+
+    @Mock
+    private NotificationTemplateUpdateMapper notificationTemplateUpdateMapper;
 
     @InjectMocks
     private NotificationTemplateUseCaseImpl notificationTemplateUseCase;
@@ -102,5 +106,37 @@ class NotificationTemplateUseCaseImplTest {
         Optional<NotificationTemplate> result = notificationTemplateUseCase.findByName("nonexistent");
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void delete_missingTemplate_throwsEntityNotFound() {
+        when(notificationTemplateRepository.getById(99L)).thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> notificationTemplateUseCase.delete(99L));
+    }
+
+    @Test
+    void update_existingTemplate_appliesMapperAndPersists() {
+        NotificationTemplate existing = template();
+        NotificationTemplate patch = otherTemplate();
+        NotificationTemplate updated = otherTemplate();
+
+        when(notificationTemplateRepository.getById(NotificationTemplateProvider.TEMPLATE_ID)).thenReturn(existing);
+        when(notificationTemplateRepository.update(existing)).thenReturn(updated);
+
+        NotificationTemplate result = notificationTemplateUseCase.update(patch,
+                NotificationTemplateProvider.TEMPLATE_ID);
+
+        assertSame(updated, result);
+        verify(notificationTemplateUpdateMapper).updateFromModel(patch, existing);
+        verify(notificationTemplateRepository).update(existing);
+    }
+
+    @Test
+    void update_missingTemplate_throwsEntityNotFound() {
+        NotificationTemplate patch = template();
+        when(notificationTemplateRepository.getById(99L)).thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> notificationTemplateUseCase.update(patch, 99L));
     }
 }

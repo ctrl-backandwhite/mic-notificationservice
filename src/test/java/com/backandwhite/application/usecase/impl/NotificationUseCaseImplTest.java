@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.backandwhite.application.handler.NotificationCommandHandler;
+import com.backandwhite.application.mapper.NotificationUpdateMapper;
 import com.backandwhite.common.exception.EntityNotFoundException;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.domain.model.NotificationStatus;
@@ -30,6 +31,9 @@ class NotificationUseCaseImplTest {
 
     @Mock
     private NotificationCommandHandler notificationCommandHandler;
+
+    @Mock
+    private NotificationUpdateMapper notificationUpdateMapper;
 
     @InjectMocks
     private NotificationUseCaseImpl notificationUseCase;
@@ -87,6 +91,38 @@ class NotificationUseCaseImplTest {
         notificationUseCase.delete(NotificationProvider.NOTIFICATION_ID);
 
         verify(notificationRepository).delete(NotificationProvider.NOTIFICATION_ID);
+    }
+
+    @Test
+    void delete_missingNotification_throwsEntityNotFound() {
+        when(notificationRepository.getById(99L)).thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> notificationUseCase.delete(99L));
+    }
+
+    @Test
+    void update_existingNotification_appliesMapperAndPersists() {
+        Notification existing = notification();
+        Notification patch = failedNotification();
+        Notification updated = failedNotification();
+
+        when(notificationRepository.getById(NotificationProvider.NOTIFICATION_ID)).thenReturn(existing);
+        when(notificationRepository.update(existing)).thenReturn(updated);
+
+        Notification result = notificationUseCase.update(patch, NotificationProvider.NOTIFICATION_ID);
+
+        assertSame(updated, result);
+        verify(notificationUpdateMapper).updateFromModel(patch, existing);
+        verify(notificationCommandHandler).validate(existing);
+        verify(notificationRepository).update(existing);
+    }
+
+    @Test
+    void update_missingNotification_throwsEntityNotFound() {
+        Notification patch = notification();
+        when(notificationRepository.getById(99L)).thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> notificationUseCase.update(patch, 99L));
     }
 
     @Test
