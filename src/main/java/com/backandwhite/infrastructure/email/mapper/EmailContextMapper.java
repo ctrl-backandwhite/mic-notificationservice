@@ -20,7 +20,12 @@ import org.thymeleaf.context.Context;
 @Mapper(componentModel = "spring")
 public interface EmailContextMapper {
 
-    String DEFAULT_LANG = "en";
+    // Spanish is the primary locale of the storefront (es-ES + LatAm). Use
+    // it as the fallback when the caller doesn't specify a language,
+    // otherwise the Thymeleaf resolver picks messages_en.properties and the
+    // customer sees English bundle keys mixed with Spanish hardcoded parts
+    // (subject, customer name, product names…).
+    String DEFAULT_LANG = "es";
     String DEFAULT_TEMPLATE_FILE = "email/default";
 
     default Context toContext(Notification notification) {

@@ -3,8 +3,10 @@ package com.backandwhite.infrastructure.db.postgres.mapper;
 import com.backandwhite.domain.model.Notification;
 import com.backandwhite.infrastructure.db.postgres.entity.NotificationEntity;
 import java.util.List;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = {NotificationTemplateEntityMapper.class})
 public interface NotificationEntityMapper {
@@ -44,4 +46,19 @@ public interface NotificationEntityMapper {
     List<Notification> toDomainList(List<NotificationEntity> entities);
 
     List<NotificationEntity> toEntityList(List<Notification> models);
+
+    /**
+     * Drop the @ManyToOne template reference when it hasn't been persisted yet (id
+     * == null). The consumer uses a synthetic file-based NotificationTemplate to
+     * drive Thymeleaf rendering when no row exists in notification_templates;
+     * persisting that transient instance would fail with
+     * TransientPropertyValueException and force Kafka to retry the delivery,
+     * sending the same email multiple times.
+     */
+    @AfterMapping
+    default void dropTransientTemplate(Notification source, @MappingTarget NotificationEntity target) {
+        if (target.getTemplate() != null && target.getTemplate().getId() == null) {
+            target.setTemplate(null);
+        }
+    }
 }
