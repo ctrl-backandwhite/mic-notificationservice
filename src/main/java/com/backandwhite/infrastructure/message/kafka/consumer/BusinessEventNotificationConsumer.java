@@ -1,6 +1,7 @@
 package com.backandwhite.infrastructure.message.kafka.consumer;
 
 import com.backandwhite.application.handler.NotificationCommandHandler;
+import com.backandwhite.application.service.NotificationPreferencesChecker;
 import com.backandwhite.application.usecase.NotificationTemplateUseCase;
 import com.backandwhite.common.constants.AppConstants;
 import com.backandwhite.core.kafka.avro.*;
@@ -43,6 +44,7 @@ public class BusinessEventNotificationConsumer {
     private final NotificationTemplateUseCase notificationTemplateUseCase;
     private final NotificationCommandHandler notificationCommandHandler;
     private final NotificationEventMapper notificationEventMapper;
+    private final NotificationPreferencesChecker preferencesChecker;
 
     @Value("${app.store.url:http://localhost:9000}")
     private String storeUrl;
@@ -261,6 +263,11 @@ public class BusinessEventNotificationConsumer {
     private void sendNotification(String recipient, String subject, String templateName,
             Map<String, Object> variables) {
         try {
+            if (!preferencesChecker.shouldSend(recipient, templateName)) {
+                log.info("::> Notification skipped — recipient opted out of category: recipient={}, template={}",
+                        recipient, templateName);
+                return;
+            }
             Notification notification = notificationEventMapper.toNotification(recipient, subject, variables);
 
             notificationCommandHandler.validate(notification);
