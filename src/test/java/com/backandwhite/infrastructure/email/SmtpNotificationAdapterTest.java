@@ -52,7 +52,8 @@ class SmtpNotificationAdapterTest {
     }
 
     private SmtpNotificationAdapter newAdapter() {
-        return new SmtpNotificationAdapter(mailSender, templateEngine, notificationRepository, emailContextMapper);
+        return new SmtpNotificationAdapter(mailSender, templateEngine, notificationRepository, emailContextMapper,
+                "noreply@test.local", "NX036 Test");
     }
 
     private Notification baseNotification() {

@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -172,7 +173,7 @@ public class BusinessEventNotificationConsumer {
         sendNotification(email, "Payment Failed", "payment-failed", vars);
     }
 
-    @KafkaListener(topics = AppConstants.KAFKA_TOPIC_REFUND_COMPLETED, groupId = AppConstants.KAFKA_GROUP_NOTIFICATIONS, containerFactory = "avroKafkaListenerContainerFactory")
+    @KafkaListener(topics = AppConstants.KAFKA_TOPIC_PAYMENT_REFUND_COMPLETED, groupId = AppConstants.KAFKA_GROUP_NOTIFICATIONS, containerFactory = "avroKafkaListenerContainerFactory")
     public void onRefundCompleted(PaymentRefundCompletedEvent event) {
         String email = str(event.getEmail());
         if (email == null)
@@ -268,6 +269,19 @@ public class BusinessEventNotificationConsumer {
                         recipient, templateName);
                 return;
             }
+
+            // Skip the send entirely when there is no real template wired up
+            // (neither a DB row nor a Thymeleaf file under templates/email/).
+            // Without this check the consumer would happily render the empty
+            // "email/default" placeholder and spam users with one blank email
+            // per Kafka event (order.created + payment.confirmed + ...).
+            Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
+            boolean fileExists = new ClassPathResource("templates/email/" + templateName + ".html").exists();
+            if (templateOpt.isEmpty() && !fileExists) {
+                log.info("::> Notification skipped — no template for '{}' (DB+file both missing)", templateName);
+                return;
+            }
+
             Notification notification = notificationEventMapper.toNotification(recipient, subject, variables);
 
             notificationCommandHandler.validate(notification);
@@ -275,7 +289,6 @@ public class BusinessEventNotificationConsumer {
             // Resolve template — file-based templates are NOT set on notification
             // before save to avoid TransientPropertyValueException
             NotificationTemplate fileTemplate = null;
-            Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
             if (templateOpt.isEmpty()) {
                 log.info("::> Template '{}' not found in DB. Falling back to file: email/{}", templateName,
                         templateName);

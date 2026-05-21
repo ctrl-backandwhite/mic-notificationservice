@@ -12,6 +12,7 @@ import com.backandwhite.infrastructure.message.kafka.mapper.NotificationEventMap
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,22 @@ public class KafkaNotificationConsumer {
      * validates, resolves the template, and sends the email.
      */
     private void processEvent(EmailNotificationEvent event) {
+        // Drop events that don't have a real template wired up so users never
+        // receive a blank "you have a notification" email. A template must
+        // exist either in the DB (notification_templates row) or as a
+        // Thymeleaf file under templates/email/<name>.html.
+        String templateName = event.getTemplateName();
+        if (templateName == null || templateName.isBlank()) {
+            log.info("::> Notification skipped — empty templateName");
+            return;
+        }
+        Optional<NotificationTemplate> templateOpt = notificationTemplateUseCase.findByName(templateName);
+        boolean fileExists = new ClassPathResource("templates/email/" + templateName + ".html").exists();
+        if (templateOpt.isEmpty() && !fileExists) {
+            log.info("::> Notification skipped — no template for '{}' (DB+file both missing)", templateName);
+            return;
+        }
+
         Notification notification = notificationEventMapper.toNotification(event);
 
         // Validate notification before persisting
@@ -50,7 +67,6 @@ public class KafkaNotificationConsumer {
 
         // Resolve template — file-based templates are NOT set on notification
         // before save to avoid TransientPropertyValueException
-        String templateName = event.getTemplateName() != null ? event.getTemplateName() : null;
         NotificationTemplate fileTemplate = resolveTemplate(notification, templateName);
 
         Notification saved = notificationRepository.save(notification);

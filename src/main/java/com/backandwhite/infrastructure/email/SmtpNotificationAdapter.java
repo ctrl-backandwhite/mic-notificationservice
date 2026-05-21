@@ -5,10 +5,11 @@ import com.backandwhite.domain.model.NotificationStatus;
 import com.backandwhite.domain.port.NotificationSender;
 import com.backandwhite.domain.repository.NotificationRepository;
 import com.backandwhite.infrastructure.email.mapper.EmailContextMapper;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.time.Instant;
-import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -23,13 +24,26 @@ import org.thymeleaf.context.Context;
  */
 @Log4j2
 @Service
-@AllArgsConstructor
 public class SmtpNotificationAdapter implements NotificationSender {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final NotificationRepository notificationRepository;
     private final EmailContextMapper emailContextMapper;
+    private final String fromAddress;
+    private final String fromName;
+
+    public SmtpNotificationAdapter(JavaMailSender mailSender, TemplateEngine templateEngine,
+            NotificationRepository notificationRepository, EmailContextMapper emailContextMapper,
+            @Value("${spring.mail.username:}") String fromAddress,
+            @Value("${notification.email.from-name:NX036}") String fromName) {
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
+        this.notificationRepository = notificationRepository;
+        this.emailContextMapper = emailContextMapper;
+        this.fromAddress = fromAddress;
+        this.fromName = fromName;
+    }
 
     @Override
     public void send(Notification notification) {
@@ -38,6 +52,13 @@ public class SmtpNotificationAdapter implements NotificationSender {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+            // Gmail SMTP rewrites a missing From to the authenticated user, but
+            // some clients flag that as suspicious. Setting an explicit named
+            // From + Reply-To dramatically reduces spam classification.
+            if (fromAddress != null && !fromAddress.isBlank()) {
+                helper.setFrom(new InternetAddress(fromAddress, fromName, "UTF-8"));
+                helper.setReplyTo(fromAddress);
+            }
             helper.setTo(notification.getRecipient());
             helper.setSubject(notification.getSubject());
             helper.setText(htmlContent, true);
